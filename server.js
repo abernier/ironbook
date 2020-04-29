@@ -21,7 +21,7 @@ function catchNext(asyncMidd) {
 }
 
 app.get('/', (req, res, next) => {
-  res.send('ironbook')
+  res.send(`curl -XPOST -F 'tarball=@/Users/abernier/tmp/course.tar.gz' https://ironboook.herokuapp.com/ >~/Desktop/ironbook.pdf`)
 })
 
 app.post('/', upload.single('tarball'), catchNext(async (req, res, next) => {
@@ -48,5 +48,5 @@ app.post('/', upload.single('tarball'), catchNext(async (req, res, next) => {
 
 }))
 
-const port = 3000
+const port = process.env.PORT || 3000
 app.listen(port, () => console.log(`app listening on port ${port}`))
