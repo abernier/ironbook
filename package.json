@@ -1,0 +1,21 @@
+{
+  "name": "ironbook",
+  "version": "0.1.0",
+  "description": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/abernier/ironbook.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "handlebars": "^4.7.6",
+    "multer": "^1.4.2",
+    "xml2js": "^0.4.23"
+  },
+  "devDependencies": {}
+}

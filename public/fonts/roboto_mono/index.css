@@ -1,0 +1,70 @@
+/* thin */
+@font-face {
+    font-family: 'Roboto Mono';
+    src: url('RobotoMono-Thin.ttf');
+    font-weight: 100;
+    font-style: normal;
+}
+/* thin italic */
+@font-face {
+    font-family: 'Roboto Mono';
+    src: url('RobotoMono-ThinItalic.ttf');
+    font-weight: 100;
+    font-style: italic;
+}
+/* light */
+@font-face {
+    font-family: 'Roboto Mono';
+    src: url('RobotoMono-Light.ttf');
+    font-weight: 300;
+    font-style: normal;
+}
+/* light italic */
+@font-face {
+    font-family: 'Roboto Mono';
+    src: url('RobotoMono-LightItalic.ttf');
+    font-weight: 300;
+    font-style: italic;
+}
+/* normal */
+@font-face {
+    font-family: 'Roboto Mono';
+    src: url('RobotoMono-Regular.ttf');
+    font-weight: 400;
+    font-style: normal;
+}
+/* nornal italic */
+@font-face {
+    font-family: 'Roboto Mono';
+    src: url('RobotoMono-Italic.ttf');
+    font-weight: 400;
+    font-style: italic;
+}
+/* medium */
+@font-face {
+    font-family: 'Roboto Mono';
+    src: url('RobotoMono-Medium.ttf');
+    font-weight: 500;
+    font-style: normal;
+}
+/* medium italic */
+@font-face {
+    font-family: 'Roboto Mono';
+    src: url('RobotoMono-MediumItalic.ttf');
+    font-weight: 500;
+    font-style: italic;
+}
+/* bold */
+@font-face {
+    font-family: 'Robotobold';
+    src: url('RobotoMono-Bold.ttf');
+    font-weight: 700;
+    font-style: normal;
+}
+/* bold italic */
+@font-face {
+    font-family: 'Roboto Mono';
+    src: url('RobotoMono-BlackItalic.ttf');
+    font-weight: 700;
+    font-style: italic;
+}

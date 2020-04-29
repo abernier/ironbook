@@ -1,0 +1,39 @@
+m4_include(`index.m4.css')
+
+m4_ifdef(`BLEED',,`m4_define(`BLEED', `0')')
+
+m4_ifdef(`BSCX',,`m4_define(`BSCX', `0')')
+m4_ifdef(`BSCY',,`m4_define(`BSCY', `0')')
+m4_ifdef(`FOLDMARGIN',,`m4_define(`FOLDMARGIN', `0')')
+m4_ifdef(`SPINEFOLDMARGIN',,`m4_define(`SPINEFOLDMARGIN', `0')')
+m4_ifdef(`SPINEWIDTH',,`m4_define(`SPINEWIDTH', `0')')
+m4_ifdef(`CANEVASWIDTH',,`m4_define(`CANEVASWIDTH', PAGEWIDTH)')
+m4_ifdef(`CANEVASHEIGHT',,`m4_define(`CANEVASHEIGHT', PAGEHEIGHT)')
+m4_ifdef(`RIGHT',,`m4_define(`RIGHT', `0')')
+m4_ifdef(`TOP',,`m4_define(`TOP', `0')')
+m4_ifdef(`COLORFUL',,`m4_define(`COLORFUL', `0')')
+
+m4_include(`cover.m4.css')
+
+m4_ifdef(`MARGINBINDING',,`m4_define(`MARGINBINDING', `0')')
+m4_ifdef(`NOINKLEFT',,`m4_define(`NOINKLEFT', `0')')
+m4_ifdef(`NOINKRIGHT',,`m4_define(`NOINKRIGHT', `0')')
+
+m4_include(`pages.m4.css')
+
+body {white-space:normal;word-spacing:normal;}
+
+#front,
+#back {display:block; position:absolute; left:BC(-(MARGINRIGHT+MARGINBINDING+BLEED))mm;/*-($marginRight + $marginBinding + $bleed)*/top:BC(-(MARGINTOP + BLEED))mm;/*-($marginTop + $bleed)*/right:BC(-(MARGINLEFT + BLEED))mm;/*-($marginLeft + $bleed)*/bottom:BC(-(MARGINBOTTOM+BLEED))mm;/*-($marginBottom + $bleed)*/}
+
+m4_ifelse(COLORFUL, `1', `
+body {page:none; color:initial;}
+#front,
+#back {
+  background:THEME;
+  color:THEMEOPPOSITE;/*($themeOpposite)*/
+}
+',)
+
+#front {page-break-after:left;}
+.page.promo {page-break-after:left;}

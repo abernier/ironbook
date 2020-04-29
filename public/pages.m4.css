@@ -1,0 +1,439 @@
+m4_include(`index.m4.css')
+
+m4_ifdef(`MARGINTOP',,`m4_define(`MARGINTOP', `12.7')')
+m4_ifdef(`MARGINRIGHT',,`m4_define(`MARGINRIGHT', `12.7')')
+m4_ifdef(`MARGINBOTTOM',,`m4_define(`MARGINBOTTOM', `12.7')')
+m4_ifdef(`MARGINLEFT',,`m4_define(`MARGINLEFT', `12.7')')
+
+m4_ifdef(`MARGINBINDING',,`m4_define(`MARGINBINDING', `19')') /* see: https://developers.lulu.com/faq#what-is-gutter */
+
+m4_ifdef(`BLEEDTOP',,`m4_define(`BLEEDTOP', `3.175')')
+m4_ifdef(`BLEEDRIGHT',,`m4_define(`BLEEDRIGHT', `3.175')')
+m4_ifdef(`BLEEDBOTTOM',,`m4_define(`BLEEDBOTTOM', `3.175')')
+m4_ifdef(`BLEEDLEFT',,`m4_define(`BLEEDLEFT', `3.175')')
+
+m4_ifdef(`NOINKLEFT',,`m4_define(`NOINKLEFT', `3')')
+m4_ifdef(`NOINKRIGHT',,`m4_define(`NOINKRIGHT', `3')')
+
+m4_ifdef(`SIDENOTESWIDTH',,`m4_define(`SIDENOTESWIDTH', `60')')
+m4_ifdef(`SIDENOTESTHICKNESS',,`m4_define(`SIDENOTESTHICKNESS', `1')')
+
+m4_ifdef(`GUTTER',,`m4_define(`GUTTER', `8')')
+
+/*
+
+Variables
+===
+
+$pageWidth = BC(PAGEWIDTH)mm
+$pageHeight = BC(PAGEHEIGHT)mm
+
+$bleedTop = BC(BLEEDTOP)mm
+$bleedRight = BC(BLEEDRIGHT)mm
+$bleedBottom = BC(BLEEDBOTTOM)mm
+$bleedLeft = BC(BLEEDLEFT)mm
+
+$marginBinding = BC(MARGINBINDING)mm
+
+$marginTop = BC(MARGINTOP)mm
+$marginRight = BC(MARGINRIGHT)mm
+$marginBottom = BC(MARGINBOTTOM)mm
+$marginLeft = BC(MARGINLEFT)mm
+
+$sidenotesWidth = BC(SIDENOTESWIDTH)mm
+
+inherits:
+---------
+
+$pageWidth
+$pageHeight
+
+*/
+
+.page.lesson main {
+  columns:2;
+  column-gap:BC(GUTTER)mm;
+}
+
+@page {
+  size:BC(PAGEWIDTH)mm BC(PAGEHEIGHT)mm;/*($pageWidth) ($pageHeight)*/
+  /* marks:crop; */
+  margin:BC(MARGINTOP)mm BC(MARGINRIGHT)mm BC(MARGINBOTTOM)mm BC(MARGINLEFT)mm;/*($marginTop) ($marginRight) ($marginBottom) ($marginLeft)*/
+  prince-bleed:BC(BLEEDTOP)mm BC(BLEEDRIGHT)mm BC(BLEEDBOTTOM)mm BC(BLEEDLEFT)mm;/*($bleedTop) ($bleedRight) ($bleedBottom) ($bleedLeft)*/
+}
+@page:left {
+  margin-right:BC(MARGINRIGHT+MARGINBINDING)mm;/*($marginRight+$marginBinding)*/
+}
+@page:right {
+  margin-left:BC(MARGINLEFT+MARGINBINDING)mm;/*($marginLeft+$marginBinding)*/
+}
+
+/* noink */
+/* .noinkleft {flow:static(noinkleft); position:relative;}
+.noinkleft:before {content:""; display:inline-block;background:green; height:BC(2*PAGEHEIGHT)mm;position:absolute;top:0;right:0; transform:translateY(-50%); width:BC(NOINKLEFT)mm;}
+.noinkright {flow:static(noinkright); position:relative;}
+.noinkright:before {content:""; display:inline-block;background:white; height:BC(2*PAGEHEIGHT)mm;position:absolute;top:0;left:0; transform:translateY(-50%); width:BC(NOINKRIGHT)mm;}
+@page:left {
+  @top-right-corner {content:flow(noinkleft);}
+  @right {content:flow(noinkleft);}
+  @bottom-right-corner {content:flow(noinkleft);}
+}
+@page:right {
+  @top-left-corner {content:flow(noinkright);}
+  @left {content:flow(noinkright);}
+  @bottom-left-corner {content:flow(noinkright);}
+} */
+/* END of noink */
+
+@page {
+  @bottom-center {content:counter(page); color:GRAY; font-weight:300; font-size:10pt;}
+}
+section.page {
+  /*The "prince-page-group" bit tells the system to use the :first page whenever you start a new chapter.*/
+  prince-page-group:start;
+}
+
+section.page.lesson {page:pagelesson;}
+@page pagelesson {
+  /* background:yellow; */
+
+  @left {content:flow(sidenotes); /*background:green;*/}
+}
+@page pagelesson:left {
+  margin-left:BC(MARGINLEFT + SIDENOTESWIDTH + GUTTER)mm;
+}
+@page pagelesson:right {
+  margin-left:BC(MARGINBINDING + MARGINLEFT + SIDENOTESWIDTH + GUTTER)mm;
+}
+section.page.lesson {page-break-after:left;}
+
+.sidenotes {
+  flow:static(sidenotes); position:relative;
+  height:BC(PAGEHEIGHT - MARGINTOP - MARGINBOTTOM)mm;
+  overflow:hidden;
+}
+.sidenotes:before {
+  content:leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A" leader(".") "\A";
+  white-space:pre-line;
+  font-size:7pt;
+  line-height:8mm; font-family:"Roboto"; color:GRAY;
+  
+  display:block;
+  width:BC(SIDENOTESWIDTH)mm; height:BC(PAGEHEIGHT - MARGINTOP - MARGINBOTTOM)mm;
+  
+  /* background-image:linear-gradient(#eee BC(SIDENOTESTHICKNESS)pt, white BC(SIDENOTESTHICKNESS)pt);
+  background-size:100% 16pt;
+  background-position:-BC(SIDENOTESTHICKNESS)pt -BC(SIDENOTESTHICKNESS)pt; */
+  /* background:yellow; */
+
+  position:absolute; right:BC(GUTTER)mm; top:0mm;
+}
+
+.footnote {
+  float:footnote;
+  footnote-display:inline;
+  footnote-style-position:inside;
+  font-size:80%;
+}
+/* a[href]::footnote-call { content: " [See '" target-counter(attr(href)) "']"; } */
+/* .footnote::footnote-marker {
+    footnote-style-position: outside;
+    content: counter(footnote) " -" ' ';
+} */
+@page pagelesson {counter-reset: footnote;}
+@page pagelesson {
+  @footnotes {
+    border-top: solid black thin;
+    margin-top:10pt;
+  }
+}
+
+@page pagelesson:right {
+  @top-right-corner {
+    content:flow(bookmark);
+  }
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family:"Roboto"; font-weight:500;
+  line-height:1;
+}
+
+.page.lesson h1:after,
+.page.lesson h2:after,
+.page.lesson h3:after,
+.page.lesson h4:after,
+.page.lesson h5:after,
+.page.lesson h6:after {
+  /* content:leader("."); font-size:7pt; */
+  /*content:leader("_"); word-spacing:-.5em; */
+  color:GRAY;
+}
+
+/*
+ ######   ######## ##    ## ######## ########     ###    ##       
+##    ##  ##       ###   ## ##       ##     ##   ## ##   ##       
+##        ##       ####  ## ##       ##     ##  ##   ##  ##       
+##   #### ######   ## ## ## ######   ########  ##     ## ##       
+##    ##  ##       ##  #### ##       ##   ##   ######### ##       
+##    ##  ##       ##   ### ##       ##    ##  ##     ## ##       
+ ######   ######## ##    ## ######## ##     ## ##     ## ######## 
+*/
+
+m4_define(`GRAY', `#5a5a5a')
+
+iframe {
+  background-color:#eee;
+  background-image:url("codepen.svg");
+  background-size:120pt;
+  background-position:center;
+  background-repeat:no-repeat;
+  display:block;
+  break-inside:avoid;
+  max-height:BC(8*1.5)em;
+}
+
+p >img:not(.emoji) {
+  display:block; margin-left:auto;margin-right:auto;
+  max-height:BC(.4*PAGEHEIGHT)mm;
+}
+
+ul, ol {margin-left:2em;}
+li::marker {padding-right:0.5em;}
+
+code {
+  background-color:rgb(244, 244, 244);
+  padding:.2em; border-radius:.2em;
+}
+pre code.hljs {
+  white-space: pre-wrap;
+  overflow:auto;
+  /* break-inside:avoid; */
+
+  border-left:3px solid rgb(50, 195, 255);
+  border-radius:0;
+
+  font-size:90%;
+}
+.hljs-ln td {vertical-align:top;}
+
+.emoji {height:1.2em;}
+
+.alert,
+.hljs {padding:BC(GUTTER / 3)mm;}
+
+.alert {
+  /* break-inside:avoid; */
+  margin-top:1em; margin-bottom:1em;
+}
+.alert.alert-info {background-color:rgb(209, 236, 241);}
+.alert.alert-danger {background-color:rgb(240, 205, 207);}
+.alert.alert-success {background-color:rgb(204, 230, 204);}
+.alert.alert-warning {background-color:#f9f2d2;}
+
+.alert :first-child {margin-top:0;}
+.alert :last-child {margin-bottom:0;}
+
+table {
+  width:100%; border-collapse:collapse;
+  background:white;
+}
+td, th {
+  padding:.5em; border:1px solid rgb(200, 200, 200);
+}
+
+/* bookmark class */
+.bookmark {
+  display:block;
+
+  flow:static(bookmark);
+  position:absolute;right:BC(-BLEEDTOP)mm;/*(-$bleedTop)*/top:0;padding-right:BC(BLEEDRIGHT+MARGINRIGHT)mm;/*($bleedRight + $marginRight)*/
+  padding-top:.25em;padding-bottom:.25em;
+  background-color:THEME;color:THEMEOPPOSITE; text-transform:uppercase; padding-left:2em; min-width:120pt;text-align:right!important;
+  white-space:nowrap;
+}
+/* END of bookmark class */
+
+/*
+########  #######   ######  
+   ##    ##     ## ##    ## 
+   ##    ##     ## ##       
+   ##    ##     ## ##       
+   ##    ##     ## ##       
+   ##    ##     ## ##    ## 
+   ##     #######   ######  
+*/
+
+.page.toc {
+  width:58%;margin-left:auto;margin-right:auto; text-align:center;
+  padding-top:BC(.15*PAGEHEIGHT)mm;/*(15% * $pageHeight)*/padding-bottom:BC(.10*PAGEHEIGHT)mm;/*(10% * $pageHeight)*/
+  page-break-after:left;
+}
+.page.toc >* {text-align:left;}
+
+.page.toc .h {font-weight:500; color:THEME;}
+
+.page.toc .h + p,
+.page.toc .h + p ~ p {margin-top:0;margin-bottom:0;}
+
+.page.toc a[href^="#"]:after {
+  content:"   " leader(".") "   " target-counter(attr(href), page);
+}
+
+section.page.toc {page:pagetoc;}
+@page pagetoc:right {
+  @top-right-corner {
+    content:flow(bookmark);
+  }
+}
+
+/*
+######## ##       ##    ## ##       ########    ###    ######## 
+##       ##        ##  ##  ##       ##         ## ##   ##       
+##       ##         ####   ##       ##        ##   ##  ##       
+######   ##          ##    ##       ######   ##     ## ######   
+##       ##          ##    ##       ##       ######### ##       
+##       ##          ##    ##       ##       ##     ## ##       
+##       ########    ##    ######## ######## ##     ## ##       
+*/
+
+/* flyleaf */
+.page.flyleaf {page:flyleaf;}
+@page flyleaf {background:THEME;}
+
+/*
+######## ##     ## ##     ## ##     ## ########   ######  
+   ##    ##     ## ##     ## ###   ### ##     ## ##    ## 
+   ##    ##     ## ##     ## #### #### ##     ## ##       
+   ##    ######### ##     ## ## ### ## ########   ######  
+   ##    ##     ## ##     ## ##     ## ##     ##       ## 
+   ##    ##     ## ##     ## ##     ## ##     ## ##    ## 
+   ##    ##     ##  #######  ##     ## ########   ######  
+*/
+
+.page.thumbs.bleed {left:BC(-(MARGINLEFT + BLEEDLEFT))mm;/*-($marginLeft + $bleedLeft)*/top:BC(-(MARGINTOP + BLEEDTOP))mm;/*-($marginTop + $bleedTop)*/right:BC(-(MARGINRIGHT+MARGINBINDING+BLEEDRIGHT))mm;/*-($marginRight + $marginBinding + $bleedRight)*/bottom:BC(-(MARGINBOTTOM+BLEEDBOTTOM))mm;/*-($marginBottom + $bleedBottom)*/}
+.page.thumbs .img {background-position:center;background-size:cover;}
+
+/*
+#### ##    ## ######## ########   #######  
+ ##  ###   ##    ##    ##     ## ##     ## 
+ ##  ####  ##    ##    ##     ## ##     ## 
+ ##  ## ## ##    ##    ########  ##     ## 
+ ##  ##  ####    ##    ##   ##   ##     ## 
+ ##  ##   ###    ##    ##    ##  ##     ## 
+#### ##    ##    ##    ##     ##  #######  
+*/
+
+.page.intro {text-align:center;}
+
+/** title and subtitle */
+.page.intro .title-and-subtitle {margin-bottom:1em;}
+
+.page.intro .title-and-subtitle {font-size:22pt; text-transform:uppercase; letter-spacing:2pt;}
+.page.intro .title-and-subtitle h1,
+.page.intro .title-and-subtitle p {font-size:inherit; margin:0; color:GRAY;}
+
+.page.intro .title-and-subtitle p {display:inline-block;position:relative; padding:0 1em; margin-top:.5em;}
+.page.intro .title-and-subtitle p:before,
+.page.intro .title-and-subtitle p:after {
+  content:" ";display:block;width:100%;height:.2mm; background:black;
+  position:absolute;top:0;left:0;
+}
+.page.intro .title-and-subtitle p:after {top:100%;}
+/** END of title and subtitle */
+
+.page.intro .diapo {margin:.25em;}
+.page.intro .diapo .img {width:auto;height:auto;}
+
+.page.intro .img {visibility:hidden;}
+.page.intro .img img {
+  visibility:visible;
+  display:block; max-height:BC(.5*PAGEHEIGHT)mm;/*(50% * $pageHeight)*/
+}
+
+.page.intro .diapo ~ .diapo {display:none;}
+
+.page.intro .dedication {display:block;width:60%;margin:0 auto; margin-top:1em;}
+
+.page.intro .imgs {margin:3em 0;}
+
+.page.intro .imgs {word-spacing:-.25em;}
+.page.intro .imgs > * {word-spacing:normal;}
+
+/** multipeople */
+
+.page.intro[class*="multipeople-"] .img img {display:none;}
+.page.intro[class*="multipeople-"] .img {visibility:visible; display:inline-block;vertical-align:bottom; width:50mm;height:50mm;}
+
+.page.intro[class*="multipeople-"] .diapo ~ .diapo {display:inline-block;}
+
+/** love story */
+
+.page.intro.love .title-and-subtitle:before {display:block; content:"\f10f"; font-family:"msbiconfont"; transform:rotate(-45deg); font-size:300%; color:THEME; margin-bottom:1cm;}
+
+/** END of multipeople */
+
+/*
+#### ##    ## ######## ########   #######   #######  ##       ########  
+ ##  ###   ##    ##    ##     ## ##     ## ##     ## ##       ##     ## 
+ ##  ####  ##    ##    ##     ## ##     ## ##     ## ##       ##     ## 
+ ##  ## ## ##    ##    ########  ##     ## ##     ## ##       ##     ## 
+ ##  ##  ####    ##    ##   ##   ##     ## ##     ## ##       ##     ## 
+ ##  ##   ###    ##    ##    ##  ##     ## ##     ## ##       ##     ## 
+#### ##    ##    ##    ##     ##  #######   #######  ######## ########  
+*/
+
+.page.introold {text-align:center;}
+.page.introold img {max-height:120mm;}
+
+.page.introold .h {font-size:22pt; letter-spacing:2pt; font-weight:300; text-transform:uppercase; color:GRAY;}
+
+.page.introold hr {color:THEME;}
+
+.page.introold p {font-weight:300; color:GRAY;}
+
+/*
+########   #######  ########  ##     ## ##          ###    ########  ########  ##     ##  #######  ########  #######  
+##     ## ##     ## ##     ## ##     ## ##         ## ##   ##     ## ##     ## ##     ## ##     ##    ##    ##     ## 
+##     ## ##     ## ##     ## ##     ## ##        ##   ##  ##     ## ##     ## ##     ## ##     ##    ##    ##     ## 
+########  ##     ## ########  ##     ## ##       ##     ## ########  ########  ######### ##     ##    ##    ##     ## 
+##        ##     ## ##        ##     ## ##       ######### ##   ##   ##        ##     ## ##     ##    ##    ##     ## 
+##        ##     ## ##        ##     ## ##       ##     ## ##    ##  ##        ##     ## ##     ##    ##    ##     ## 
+##         #######  ##         #######  ######## ##     ## ##     ## ##        ##     ##  #######     ##     #######  
+*/
+
+.page.popularphoto {text-align:center;}
+.page.popularphoto >* {text-align:left; max-width:58%;}
+
+.page.popularphoto .h {font-size:10pt; text-transform:uppercase; margin-bottom:1em; color:THEME;}
+.page.popularphoto .h + * {margin-top:0;}
+
+.page.popularphoto blockquote {margin-left:0; font-size:20pt; text-transform:uppercase; color:GRAY; text-align:justify; font-weight:300;}
+.page.popularphoto img {display:block; margin:0 auto; clear:both;}
+
+.page.popularphoto blockquote {max-height:209pt;/*(7 * @font-size * $lh * $fs)*/ overflow:hidden;}
+.page.popularphoto blockquote p {margin:0;}
+.page.popularphoto img {max-height:100mm;}
+
+.page.popularphoto blockquote {position:relative;}
+.page.popularphoto blockquote .like {
+  white-space:nowrap; position:absolute;right:0;bottom:0; background:THEMEOPPOSITE; color:THEME; font-weight:700;
+}
+.page.popularphoto blockquote .like:before {
+  /*content:"(...)";*/content:" ";
+  display:inline-block; margin-right:1em; margin-left:.25em;
+}  
+.page.popularphoto blockquote .like:after {
+  content:" "; display:block; height:100%; width:4.5mm;
+  position:absolute; right:99%; top:0;
+  background:transparent url("text-overflow-gradient-white.png") right top repeat-y;
+}
+
+.page.popularphoto .readon {font-size:10pt; color:GRAY;}
+.page.popularphoto a[href="#mostpopularpost"]:after {content:target-counter(attr(href), page);}
+

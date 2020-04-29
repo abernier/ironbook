@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html class="no-js">
+<head>
+  <meta charset="utf-8">
+  <title></title>
+  {{!-- <meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1,initial-scale=1,user-scalable=no"> --}}
+  <link rel="stylesheet" href="hljs.min.css">
+  <link rel="stylesheet" href="pages.css">
+  <!-- <link rel="stylesheet" href="debug.css"> -->
+</head>
+<body class=""><!--  | .multipeople-1 | .multipeople-2 | .multipeople-3 | .multipeople-4 | .multipeople-5 -->
+
+  <!-- noink -->
+  <!-- <div class="noinkleft"></div>
+  <div class="noinkright"></div> -->
+
+  <!-- sidenotes -->
+  <div class="sidenotes"></div>
+
+  {{! TOC }}
+  {{#*inline "tocentry"}}
+  <p><a href="#{{id}}">{{title}}</a></p>
+  {{/inline}}
+
+  <section class="page toc">
+    <div class="bookmark">Table Of Content</div>
+
+    <h3 class="h">Module 1</h3>
+    {{#each lessons.m1}}{{>tocentry}}{{/each}}
+
+    <h3 class="h">Module 2</h3>
+    {{#each lessons.m2}}{{>tocentry}}{{/each}}
+    
+    <h3 class="h">Module 3</h3>
+    {{#each lessons.m3}}{{>tocentry}}{{/each}}
+  </section>
+  {{! END of TOC }}
+
+  {{! lessons pages }}
+  {{#*inline "lesson"}}
+  <section id="{{id}}" class="page lesson">
+    <div class="bookmark">{{title}} ‒ Module {{module}}</div>
+
+    <h1>{{title}}</h1>
+
+    <main>
+{{{content}}}
+    </main>
+  </section>
+  {{/inline}}
+
+  {{#each lessons.m1}}{{>lesson module=1}}{{/each}}
+  {{#each lessons.m2}}{{>lesson module=2}}{{/each}}
+  {{#each lessons.m3}}{{>lesson module=3}}{{/each}}
+  {{! END of lessons pages }}
+  
+  <script src="highlight.min.js"></script>
+  <!-- <script src="highlightjs-line-numbers.min.js"></script> -->
+  <script>
+  (function () {
+    var parents = [];
+    // DOM manip: remove .hljs >.wrapper (see: https://codepen.io/abernier/pen/PoovyoL)
+    var wrappers = Array.prototype.slice.call(document.querySelectorAll('.hljs .wrapper'), 0);
+    for (var i = 0; i<wrappers.length; i++) {
+      var textContent = wrappers[i].querySelector('.code').textContent;
+      wrappers[i].parentNode.textContent = textContent;
+    }
+    
+    // highlight + line-numbers
+    var blocks = Array.prototype.slice.call(document.querySelectorAll('pre code'), 0)
+    for (var i = 0; i<blocks.length; i++) {
+      hljs.highlightBlock(blocks[i]);
+      //hljs.lineNumbersBlock(blocks[i]);
+    }
+  }).call(this);
+
+  //
+  // links footnotes
+  //
+
+  (function () {
+    var links = Array.prototype.slice.call(document.querySelectorAll('.page.lesson a[href]'), 0);
+    for (var i = 0; i<links.length; i++) {
+      var span = document.createElement('span');
+      span.textContent = links[i].href;
+      span.className = "footnote";
+
+      links[i].parentNode.insertBefore(span, links[i].nextSibling);
+
+      //hljs.lineNumbersBlock(blocks[i]);
+    }
+  }).call(this);
+  
+
+  //
+  // iframes footnotes
+  //
+
+  (function () {
+    var iframes = Array.prototype.slice.call(document.querySelectorAll('iframe[src]'), 0);
+    for (var i = 0; i<iframes.length; i++) {
+      var span = document.createElement('span');
+      span.textContent = iframes[i].getAttribute('src');
+      span.className = "footnote";
+
+      var div = document.createElement('div');
+      div.innerHTML = 'see: '
+      div.appendChild(span);
+
+      iframes[i].parentNode.insertBefore(span, iframes[i].nextSibling);
+    }
+  }).call(this);
+
+  //
+  // iframes footnotes
+  //
+
+  (function () {
+    var iframes = Array.prototype.slice.call(document.querySelectorAll('iframe[src*="repl.it"]'), 0);
+    for (var i = 0; i<iframes.length; i++) {
+      iframes[i].setAttribute('src', 'about:blank');
+    }
+  }).call(this);
+
+  //
+  // codepen previews (see: https://blog.codepen.io/documentation/api/url-extensions/)
+  //
+
+  false && (function () {
+    var iframes = Array.prototype.slice.call(document.querySelectorAll('iframe'), 0);
+    for (var i = 0; i<iframes.length; i++) {
+      var src = iframes[i].getAttribute('src');
+      var matches = src.match(/codepen.io\/([^\/]*)\/embed\/([^\/]*)/);
+      var username = matches[1];
+      var penid = matches[2];
+      // console.log('username', username);
+      // console.log('penid', penid);
+
+      // var src = '//codepen.io/'+username+'/pen/'+penid+'/image/large.png';
+      var src = 'https://screenshot.codepen.io/588777.NRpbqX.e9a03bdf-46d8-41a2-b0eb-0bf226fa1e2c.png';
+      console.log('src', src);
+
+      iframes[i].style.border = '2pt solid red';
+      iframes[i].style.backgroundImage = 'url("'+src+'")';
+      iframes[i].style.backgroundSize = 'contain';     
+    }
+  }).call(this);
+  </script>
+
+</body>
+</html>

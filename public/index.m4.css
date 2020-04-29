@@ -1,0 +1,79 @@
+m4_changecom(`/#', `#/')
+m4_define(`BC', `m4_syscmd(echo "scale=6; print $1" | bc)')
+
+m4_ifdef(`PAGEWIDTH',,`m4_define(`PAGEWIDTH', `297')')
+m4_ifdef(`PAGEHEIGHT',,`m4_define(`PAGEHEIGHT', `210')')
+
+m4_ifdef(`THEME',,`m4_define(`THEME', `#32c3ff')')
+m4_ifdef(`THEMEOPPOSITE',,`m4_define(`THEMEOPPOSITE', `#ffffff')')
+
+m4_ifdef(`GRAY',,`m4_define(`GRAY', `#aaaaaa')')
+
+
+@import "debug.css";
+
+@import "modules/logo/index.css";
+
+@import "fonts/roboto/index.css";
+@import "fonts/roboto_mono/index.css";
+@import "fonts/roboto_slab/index.css";
+/* @import "fonts/msbiconfont/index.css"; */
+/* ultimate fallback */
+@font-face {
+  font-family:arialuni;
+  src:url('fonts/arialuni/arialuni.ttf') format('truetype');
+}
+
+/*
+
+Variables
+===
+
+$pageWidth = PAGEWIDTH
+$pageHeight = PAGEHEIGHT
+
+$theme = THEME
+$themeOpposite = THEMEOPPOSITE
+
+--
+
+$fs = 12pt // font-size
+$lh = 1.5  // line-height
+$fw = 300  // font-weight
+
+$gutter = 1em // columns gutter
+
+*/
+
+a {color: inherit;}
+img {max-width:100%; max-height:100%;}
+html {font-size:16px; /* $fs in px */}
+
+body {
+  margin:0;
+
+  font:400 7pt/1.5 "Roboto Slab", "Helvetica Neue", Helvetica, sans-serif; /* $fw, $lh */
+  /* -webkit-font-smoothing:antialiased; */
+  
+  hyphens:auto;
+}
+
+pre, code {font-family:"Roboto Mono", monospace;}
+
+/* hr {display:block; width:3em; margin:1em auto; border:0;border-bottom:1pt solid;} */
+
+:link {text-decoration:none; color:rgb(0, 117, 180);}
+
+/* vcenter class */
+/* .vcenter {height:100%;}
+.vcenter:before {
+  content:"";
+  width:0;
+  height:100%;
+  display:inline-block;vertical-align:middle;
+}
+html.debug .vcenter:before {background:#00ff00;width:1pt;}
+.vcenter >* {
+  display:inline-block;vertical-align:middle;
+  max-width:99.8%;
+} */

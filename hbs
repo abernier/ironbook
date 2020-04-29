@@ -1,0 +1,63 @@
+#!/usr/bin/env node
+
+const path = process.argv[2];
+const coursexml = process.argv[3];
+// console.log('coursexml', coursexml)
+
+var hbs = require("handlebars");
+var fs = require('fs');
+
+const xmlcourse2json = require('./xmlcourse2json.js')
+
+async function main() {
+  //hbs.registerPartial("layout", fs.readFileSync('./layout.hbs', 'utf8'));
+
+  var templateFile = fs.readFileSync(path, 'utf8');
+  var template = hbs.compile( templateFile );
+
+  const courses = await xmlcourse2json(coursexml)
+  // console.log(courses);
+
+  const lessons = {
+    m1: [],
+    m2: [],
+    m3: []
+  };
+  courses.course.chapter.forEach(chapter => {
+    const module = chapter.name.substr(7,1); // /!\ chapter name must begin with "Module X"
+
+    chapter.sequential.forEach(seq => {
+      seq.vertical.forEach(vert => {
+        let file = vert.html[0] && vert.html[0].file;   // "module-1/week-1/js-intro.md"
+        if (!file) return;
+
+        let name = vert.name;
+
+        if (
+          file &&
+          !file.includes('other/') &&
+          !name.includes('LAB') &&
+          !name.toLowerCase().includes('bonus')
+        ) {
+          if (fs.existsSync(file) && Array.isArray(lessons[`m${module}`])) {
+            lessons[`m${module}`].push({
+              id: file,
+              title: name,
+              content: fs.readFileSync(file, 'utf8')
+            })
+          }
+          
+        }
+      })
+      
+    })
+  });
+  // console.log(JSON.stringify(lessons, null, 4));
+
+  var html = template({
+    lessons
+  });
+  console.log(html);
+}
+
+main().catch(console.error)

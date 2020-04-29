@@ -1,0 +1,11 @@
+@page {
+    /* marks:crop cross; */
+    background:#fcfcfc!important;
+}
+
+.noinkleft:before,
+.noinkright:before {background-color:#00FF00!important;}
+
+html.debug body {border:thin dashed #00FF00;}
+
+#spine {background:red;}

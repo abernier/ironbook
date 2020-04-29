@@ -1,0 +1,19 @@
+.logo {
+  display:inline-block;vertical-align:baseline; height:1.5em;/*($lh)*/overflow:hidden;
+  white-space:nowrap;word-spacing:-.25em;
+  -webkit-transform:translateY(17%);-moz-transform:translateY(17%);-ms-transform:translateY(17%);-o-transform:translateY(17%);transform:translateY(17%);
+}
+.logo:before,
+.logo:after {
+  font-family:"msbiconfont";
+  display:inline-block;vertical-align:top;
+}
+.logo:before {content:"\f10f";}
+.logo:after {
+  content:"\f110";
+  font-size:700%; -webkit-transform:translateY(-20%);-moz-transform:translateY(-20%);-ms-transform:translateY(-20%);-o-transform:translateY(-20%);transform:translateY(-20%);
+  margin-left:.05em;
+}
+@media print {
+  .logo {transform:translateY(-15%);} /*prince ajustment*/
+}

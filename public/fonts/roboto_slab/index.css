@@ -1,0 +1,63 @@
+/* thin */
+@font-face {
+  font-family: 'Roboto Slab';
+  src: url('RobotoSlab-Thin.ttf');
+  font-weight: 100;
+  font-style: normal;
+}
+/* extra light */
+@font-face {
+  font-family: 'Roboto Slab';
+  src: url('RobotoSlab-ExtraLight.ttf');
+  font-weight: 200;
+  font-style: normal;
+}
+/* light */
+@font-face {
+  font-family: 'Roboto Slab';
+  src: url('RobotoSlab-Light.ttf');
+  font-weight: 300;
+  font-style: normal;
+}
+/* normal */
+@font-face {
+  font-family: 'Roboto Slab';
+  src: url('RobotoSlab-Regular.ttf');
+  font-weight: 400;
+  font-style: normal;
+}
+/* medium */
+@font-face {
+  font-family: 'Roboto Slab';
+  src: url('RobotoSlab-Medium.ttf');
+  font-weight: 500;
+  font-style: normal;
+}
+/* semi bold */
+@font-face {
+  font-family: 'Roboto Slab';
+  src: url('RobotoSlab-SemiBold.ttf');
+  font-weight: 600;
+  font-style: normal;
+}
+/* bold */
+@font-face {
+  font-family: 'Robotobold';
+  src: url('RobotoSlab-Bold.ttf');
+  font-weight: 700;
+  font-style: normal;
+}
+/* extra bold */
+@font-face {
+  font-family: 'Roboto Slab';
+  src: url('RobotoSlab-ExtraBold.ttf');
+  font-weight: 800;
+  font-style: normal;
+}
+/* black */
+@font-face {
+  font-family: 'Roboto Slab';
+  src: url('RobotoSlab-Black.ttf');
+  font-weight: 900;
+  font-style: normal;
+}

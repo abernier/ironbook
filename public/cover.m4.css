@@ -1,0 +1,418 @@
+m4_include(`index.m4.css')
+
+m4_ifdef(`BLEED',,`m4_define(`BLEED', `5')')
+
+m4_ifdef(`BSCX',,`m4_define(`BSCX', `3')')
+m4_ifdef(`BSCY',,`m4_define(`BSCY', `3')')
+
+m4_ifdef(`FOLDMARGIN',,`m4_define(`FOLDMARGIN', `16.2')')
+
+m4_ifdef(`SPINEFOLDMARGIN',,`m4_define(`SPINEFOLDMARGIN', `11.7')')
+m4_ifdef(`SPINEWIDTH',,`m4_define(`SPINEWIDTH', `18')')
+
+m4_ifdef(`CANEVASWIDTH',,`m4_define(`CANEVASWIDTH', `515')')
+m4_ifdef(`CANEVASHEIGHT',,`m4_define(`CANEVASHEIGHT', `359')')
+
+m4_ifdef(`RIGHT',,`m4_define(`RIGHT', `6.4')')
+m4_ifdef(`TOP',,`m4_define(`TOP', `9.1')')
+
+m4_ifdef(`COLORFUL',,`m4_define(`COLORFUL', `0')')
+/*
+
+Variables
+===
+
+$bleed = BC(BLEED)mm;
+
+$bscx = BC(BSCX)mm;
+$bscy = BC(BSCY)mm;
+
+$foldMargin = BC(FOLDMARGIN)mm;
+
+$spineFoldMargin = BC(SPINEFOLDMARGIN)mm;
+$spineWidth = BC(SPINEWIDTH)mm;
+
+$canevasWidth = BC(CANEVASWIDTH)mm;
+$canevasHeight = BC(CANEVASHEIGHT)mm;
+
+$right = BC(RIGHT)mm;
+$top = BC(TOP)mm;
+
+$colorful = 0; // false
+
+inherits:
+---------
+
+$pageWidth
+$pageHeight
+
+$theme
+$themeOpposite
+
+---
+
+$marklength = 24pt;
+$markWidth = .5pt;
+
+*/
+
+/*
+
+ #                                        
+ #         ##   #   #  ####  #    # ##### 
+ #        #  #   # #  #    # #    #   #   
+ #       #    #   #   #    # #    #   #   
+ #       ######   #   #    # #    #   #   
+ #       #    #   #   #    # #    #   #   
+ ####### #    #   #    ####   ####    #   
+
+*/
+
+@page {
+
+  /*
+  Compute some local vars
+
+  $pageSizeWidth = 2*$foldMargin + 2*$bscx + 2*$pageWidth + 2*$spineFoldMargin + $spineWidth
+  $pageSizeHeight = 2*$foldMargin + 2*$bscy + $pageHeight
+  */
+  size:BC(2*FOLDMARGIN + 2*BSCX + 2*PAGEWIDTH + 2*SPINEFOLDMARGIN + SPINEWIDTH)mm BC(2*FOLDMARGIN + 2*BSCY + PAGEHEIGHT)mm;/*($pageSizeWidth) ($pageSizeHeight)*/
+  margin:BC(FOLDMARGIN)mm;/*($foldMargin)*/
+  prince-bleed:BC(BLEED)mm;/*($bleed)*/
+  prince-trim:BC(TOP)mm BC(RIGHT)mm BC(CANEVASHEIGHT - TOP - ((2*FOLDMARGIN + 2*BSCY + PAGEHEIGHT) + 2*BLEED))mm BC(CANEVASWIDTH - RIGHT - ((2*FOLDMARGIN + 2*BSCX + 2*PAGEWIDTH + 2*SPINEFOLDMARGIN + SPINEWIDTH) + 2*BLEED))mm;/*($top) ($right) ($canvasHeight - $top - ($pageSizeHeight + 2*$bleed)) ($canvasWidth - $right - ($pageSizeWidth + 2*$bleed))*/
+  /*marks:crop;*/
+  prince-mark-length:24pt;/*($marklength)*/
+  prince-mark-offset:BC(BLEED)mm;/*(-$bleed)*/
+
+  background:m4_ifelse(COLORFUL, `1', `THEME', `transparent');/*($colorful && $theme || transparent)*/
+  color:m4_ifelse(COLORFUL, `1', `THEMEOPPOSITE', `THEME');/*($colorful && $themeOpposite || $theme)*/
+}
+
+/* marks */
+
+.mark {display:block; background:black; position:absolute;}
+
+.mark.vertical {width:.5pt;/*($markWidth)*/ height:24pt;/*($marklength)*/}
+.mark.horizontal {display:block; width:24pt;/*($marklength)*/ height:.5pt;/*($markWidth)*/}
+
+.mark.top {bottom:100%;margin-bottom:BC(BLEED + FOLDMARGIN)mm;/*($bleed + $foldMargin)*/}
+.mark.bottom {top:100%;margin-top:BC(BLEED + FOLDMARGIN)mm;/*($bleed + $foldMargin)*/}
+
+.mark.left {right:100%;margin-right:BC(BLEED + FOLDMARGIN)mm;/*($bleed + $foldMargin)*/}
+.mark.right {left:100%;margin-left:BC(BLEED + FOLDMARGIN)mm;/*($bleed + $foldMargin)*/}
+
+/** fold */
+.mark.fold {background:cyan;}
+.mark.fold.vertical.left1 {left:0;}
+.mark.fold.vertical.left2 {left:BC(BSCX + PAGEWIDTH)mm;/*($bscx + $pageWidth)*/}
+.mark.fold.vertical.left3 {left:BC(BSCX + PAGEWIDTH + SPINEFOLDMARGIN)mm;/*($bscx + $pageWidth + $spineFoldMargin)*/}
+.mark.fold.vertical.left4 {left:BC(BSCX + PAGEWIDTH + SPINEFOLDMARGIN + SPINEWIDTH)mm;/*($bscx + $pageWidth + $spineFoldMargin + $spineWidth)*/}
+.mark.fold.vertical.left5 {left:BC(BSCX + PAGEWIDTH + SPINEFOLDMARGIN + SPINEWIDTH + SPINEFOLDMARGIN)mm;/*($bscx + $pageWidth + $spineFoldMargin + $spineWidth + $spineFoldMargin)*/}
+.mark.fold.vertical.left6 {left:BC(BSCX + PAGEWIDTH + SPINEFOLDMARGIN + SPINEWIDTH + SPINEFOLDMARGIN + PAGEWIDTH + BSCX)mm;/*($bscx + $pageWidth + $spineFoldMargin + $spineWidth + $spineFoldMargin + $pageWidth + $bscx)*/}
+
+.mark.fold.horizontal.top1 {top:0;}
+.mark.fold.horizontal.top2 {top:BC(2*BSCY + PAGEHEIGHT)mm;/*(2*$bscy + $pageHeight)*/}
+
+.mark.fold.vertical.left1 {left:0;}
+.mark.fold.vertical.left2 {left:BC(BSCX + PAGEWIDTH)mm;/*($bscx + $pageWidth)*/}
+.mark.fold.vertical.left3 {left:BC(BSCX + PAGEWIDTH + SPINEFOLDMARGIN)mm;/*($bscx + $pageWidth + $spineFoldMargin)*/}
+.mark.fold.vertical.left4 {left:BC(BSCX + PAGEWIDTH + SPINEFOLDMARGIN + SPINEWIDTH)mm;/*($bscx + $pageWidth + $spineFoldMargin + $spineWidth)*/}
+
+/** bleed */
+.mark.bleed {background-color:#ff0000;}
+.mark.bleed.vertical.left1,
+.mark.bleed.vertical.left3 {left:BC(-FOLDMARGIN)mm;/*(-$foldMargin)*/}
+.mark.bleed.vertical.left2,
+.mark.bleed.vertical.left4 {left:BC(BSCX + PAGEWIDTH + SPINEFOLDMARGIN + SPINEWIDTH + SPINEFOLDMARGIN + PAGEWIDTH + BSCX + FOLDMARGIN)mm;/*($bscx + $pageWidth + $spineFoldMargin + $spineWidth + $spineFoldMargin + $pageWidth + $bscx + $foldMargin)*/}
+
+.mark.bleed.horizontal.top1 {top:BC(-FOLDMARGIN)mm;}/*(-$foldMargin)*/
+.mark.bleed.horizontal.top2 {top:BC(2*BSCY + PAGEHEIGHT + FOLDMARGIN)mm;/*(2*$bscy + $pageHeight + $foldMargin)*/}
+
+/* END of marks*/
+
+/* back, spine, front */
+body {white-space:nowrap;word-spacing:-.25em;}
+#back,
+#spine,
+#front {display:inline-block;vertical-align:top; height:BC(2*BSCY + PAGEHEIGHT)mm;/*(2*$bscy + $pageHeight)*/ white-space:normal;word-spacing:normal;}
+
+#back,
+#front {width:BC(PAGEWIDTH+BSCX)mm;/*($pageWidth + $bscx)*/}
+
+#spine {
+  width:BC(SPINEWIDTH)mm;/*($spineWidth)*/ margin-left:BC(SPINEFOLDMARGIN)mm;/*($spineFoldMargin)*/margin-right:BC(SPINEFOLDMARGIN)mm;/*($spineFoldMargin)*/
+  transform:translateY(BC(-FOLDMARGIN)mm);/*(-$foldMargin)*/ height:BC(FOLDMARGIN + 2*BSCY + PAGEHEIGHT)mm;/*($foldMargin + 2*$bscy + $pageHeight)*/
+  text-align:right;
+}
+#spine >.in {
+  height:BC(SPINEWIDTH)mm;/*($spineWidth)*/ width:BC(FOLDMARGIN + 2*BSCY + PAGEHEIGHT)mm;/*($foldMargin + 2*$bscy + $pageHeight)*/;
+  -webkit-transform-origin:left top;-webkit-transform:rotate(90deg) translateY(-18mm);/*(@height)*/ transform-origin:left top; transform:rotate(90deg) translateY(-18mm);/*(@height)*/
+}
+
+#spine >.in:before {content:" ";display:inline-block;height:100%;vertical-align:middle;}
+#spine >.in >.in {display:inline-block;vertical-align:middle;}
+
+#spine >.in >.in {
+  width:100%;
+  -webkit-transform-origin:center;-webkit-transform:rotate(180deg);transform-origin:center;transform:rotate(180deg); /* flip */
+}
+
+#spine .logo {float:left; margin-left:15mm; font-size:115%;}
+#spine .title-and-subtitle {}
+
+#spine >.in >.in {position:relative;}
+#spine .icon-bookmark {
+  position:absolute;top:50%;left:100%;
+  font-size:700%;
+  transform-origin:left top;transform:rotate(90deg) translateX(-8.15%) translateY(-5.5%);
+}
+
+#spine .title-and-subtitle {margin-right:BC(SPINEFOLDMARGIN + 35)mm;/*($spineFoldMargin + 35mm)*/}
+
+#spine time:before {content:" • ";}
+
+#front,
+#back {position:relative;}
+#front .logo,
+#back .logo-and-website {
+  display:block;
+  position:absolute; left:50%;transform:translateX(-50%); bottom:0;margin-bottom:15mm;
+}
+#front .logo {font-size:200%;}
+
+#back .logo-and-website {text-align:center; width:auto;}
+#back .logo-and-website p {margin-bottom:0;margin-top:0;}
+#back .logo {font-size:135%;}
+
+/* END of back, spine, front */
+
+#front .imgs .avatar .title-and-subtitle h1 {font-weight:normal; text-transform:uppercase;margin:0;}
+#front .imgs .avatar .title-and-subtitle p {margin:0;}
+
+#back {text-align:center;}
+#back .backcover {
+  display:inline-block;width:65%; margin-top:50mm;
+}
+
+/*
+ #######                                        
+    #    # #    # ###### #      # #    # ###### 
+    #    # ##  ## #      #      # ##   # #      
+    #    # # ## # #####  #      # # #  # #####  
+    #    # #    # #      #      # #  # # #      
+    #    # #    # #      #      # #   ## #      
+    #    # #    # ###### ###### # #    # ###### 
+*/
+
+#front.timeline .imgs {height:42.1%; position:relative;}
+#front.timeline .imgs >.img:first-child {position:absolute;left:0;right:0;top:0;bottom:0;}
+#front.timeline .imgs .avatar {
+  position:absolute;left:0;bottom:0; padding-left:17mm; transform:translateY(50%); width:100%;box-sizing:border-box;
+}
+#front.timeline .imgs .avatar .img {display:block;width:55mm;height:55mm; border:2mm solid THEMEOPPOSITE;/*($themeOpposite)*/box-sizing:border-box; float:left;margin-right:1em;}
+#front.timeline .imgs .avatar .title-and-subtitle {
+  display:block;margin-left:60mm;/*(55mm+5mm)*/
+  position:absolute; top:50%; margin-top:5mm;
+}
+
+/*
+##     ##  #######  ########    ###    ####  ######           ##     ######   #######  ##     ##    ###    ########  ######## 
+###   ### ##     ##      ##    ## ##    ##  ##    ##         ##     ##    ## ##     ## ##     ##   ## ##   ##     ## ##       
+#### #### ##     ##     ##    ##   ##   ##  ##              ##      ##       ##     ## ##     ##  ##   ##  ##     ## ##       
+## ### ## ##     ##    ##    ##     ##  ##  ##             ##        ######  ##     ## ##     ## ##     ## ########  ######   
+##     ## ##     ##   ##     #########  ##  ##            ##              ## ##  ## ## ##     ## ######### ##   ##   ##       
+##     ## ##     ##  ##      ##     ##  ##  ##    ##     ##         ##    ## ##    ##  ##     ## ##     ## ##    ##  ##       
+##     ##  #######  ######## ##     ## ####  ######     ##           ######   ##### ##  #######  ##     ## ##     ## ######## 
+*/
+
+#front.mozaic .imgs,
+#front.square .imgs {margin:0 auto; margin-top:17%;}
+
+#front.mozaic .imgs,
+#front.square .imgs {position:relative;}
+#front.mozaic .imgs .avatar .title-and-subtitle,
+#front.square .imgs .avatar .title-and-subtitle {
+  width:206mm;/*($pageWidth + $bscx)*/
+  position:absolute; top:100%;left:50%;transform:translateX(-50%);
+  text-align:center; margin-top:5mm;
+}
+
+/*
+##     ##  #######  ########    ###    ####  ######  
+###   ### ##     ##      ##    ## ##    ##  ##    ## 
+#### #### ##     ##     ##    ##   ##   ##  ##       
+## ### ## ##     ##    ##    ##     ##  ##  ##       
+##     ## ##     ##   ##     #########  ##  ##       
+##     ## ##     ##  ##      ##     ##  ##  ##    ## 
+##     ##  #######  ######## ##     ## ####  ######  
+*/
+
+#front.mozaic .imgs {width:65%;}
+#front.mozaic .imgs .img {float:left; width:50%; border:1mm solid THEMEOPPOSITE;/*($themeOpposite)*/box-sizing:border-box;}
+#front.mozaic .imgs:after {content:".";display:block;clear:both;height:0;visibility:hidden;}
+#front.mozaic .imgs .img:nth-child(1),
+#front.mozaic .imgs .img:nth-child(2) {height:65mm;}
+#front.mozaic .imgs .img:nth-child(3),
+#front.mozaic .imgs .img:nth-child(4),
+#front.mozaic .imgs .img:nth-child(5),
+#front.mozaic .imgs .img:nth-child(6),
+#front.mozaic .imgs .img:nth-child(7) {height:32.5mm;/*(65mm / 2)*/}
+
+#front.mozaic .imgs .img:nth-child(3),
+#front.mozaic .imgs .img:nth-child(5) {width:32%;}
+#front.mozaic .imgs .img:nth-child(4) {width:68%;}
+
+#front.mozaic .imgs .img:nth-child(6) {width:23%;}
+#front.mozaic .imgs .img:nth-child(7) {width:45%;}
+
+#front.mozaic .imgs .avatar .img {display:none;}
+
+/*
+ ######   #######  ##     ##    ###    ########  ######## 
+##    ## ##     ## ##     ##   ## ##   ##     ## ##       
+##       ##     ## ##     ##  ##   ##  ##     ## ##       
+ ######  ##     ## ##     ## ##     ## ########  ######   
+      ## ##  ## ## ##     ## ######### ##   ##   ##       
+##    ## ##    ##  ##     ## ##     ## ##    ##  ##       
+ ######   ##### ##  #######  ##     ## ##     ## ######## 
+*/
+
+#front.square .imgs {width:50%; padding-top:50%;}
+#front.square .imgs .avatar .img {
+  width:100%; height:100%;
+  position:absolute; left:0;top:50%;transform:translateY(-50%);
+}
+
+/*
+ ######  ######## ##    ## ######## ######## ########  
+##    ## ##       ###   ##    ##    ##       ##     ## 
+##       ##       ####  ##    ##    ##       ##     ## 
+##       ######   ## ## ##    ##    ######   ########  
+##       ##       ##  ####    ##    ##       ##   ##   
+##    ## ##       ##   ###    ##    ##       ##    ##  
+ ######  ######## ##    ##    ##    ######## ##     ## 
+*/
+
+#front.center .imgs {height:42.1%; position:relative;}
+#front.center .imgs >.img:first-child {position:absolute;left:0;right:0;top:0;bottom:0;}
+#front.center .imgs .avatar .img {
+  width:55mm;height:55mm;
+  position:absolute; left:50%;bottom:0;transform:translateX(-50%) translateY(50%);
+  border:2mm solid THEMEOPPOSITE;/*($themeOpposite)*/ box-sizing:border-box;
+  border-radius:27.5mm;/*(@width/2)*/
+}
+#front.center .imgs .avatar .title-and-subtitle {
+  width:206mm;/*($pageWidth + $bscx)*/
+  position:absolute; top:100%;margin-top:27.5mm;/*(55mm/2)*/ left:50%;transform:translateX(-50%) translateY(5mm);
+  text-align:center;
+}
+#front.center .imgs .avatar .title-and-subtitle h1 {display:inline-block;position:relative;}
+#front.center .imgs .avatar .title-and-subtitle h1:before,
+#front.center .imgs .avatar .title-and-subtitle h1:after {
+  content:" ";display:block;width:100%;height:1pt; background:black;
+}
+#front.center .imgs .avatar .title-and-subtitle h1:before {
+  position:absolute;top:200%;left:0;
+}
+
+/*
+########  #######  ########  
+   ##    ##     ## ##     ## 
+   ##    ##     ## ##     ## 
+   ##    ##     ## ########  
+   ##    ##     ## ##        
+   ##    ##     ## ##        
+   ##     #######  ##        
+*/
+
+#front.top .imgs {height:42.1%; position:relative;}
+#front.top .imgs:after {content:".";display:block;clear:both;height:0;visibility:hidden;}
+#front.top .imgs .img {float:left; width:33.33333%; height:50%; opacity:0;}
+
+#front.top .imgs .img:nth-child(7) {display:none;}
+
+#front.top .imgs .avatar {text-align:center; padding-top:20mm; clear:both;}
+
+/*
+######## ##     ## ##       ##       
+##       ##     ## ##       ##       
+##       ##     ## ##       ##       
+######   ##     ## ##       ##       
+##       ##     ## ##       ##       
+##       ##     ## ##       ##       
+##        #######  ######## ######## 
+*/
+
+#front.full .imgs .img {display:none;}
+#front.full .imgs .avatar .img {display:block; position:absolute;left:0;top:0;right:0;bottom:0;}
+#front.full .imgs .avatar .title-and-subtitle {position:absolute;left:0;right:0; bottom:50mm; text-align:center;}
+
+#front.full .imgs .avatar .title-and-subtitle time {display:none;}
+#front.full .imgs .avatar .title-and-subtitle h1 {display:inline-block;}
+#front.full .imgs .avatar .title-and-subtitle h1:after {
+  content:" ";display:block;width:100%;height:1pt; background:black;
+}
+
+/* gradient */
+#front.full .imgs .avatar .img:after {
+  content:" "; display:block; width:100%;height:30%;
+  position:absolute; left:0;right:0;bottom:0;
+  background:transparent url("full-gradient.png") left bottom repeat-x;
+  prince-background-image-resolution:300;
+  background-size:1mm 78mm;
+}
+
+/*
+########  #######  ##    ## ########          ######  #### ######## ######## 
+##       ##     ## ###   ##    ##            ##    ##  ##       ##  ##       
+##       ##     ## ####  ##    ##            ##        ##      ##   ##       
+######   ##     ## ## ## ##    ##    #######  ######   ##     ##    ######   
+##       ##     ## ##  ####    ##                  ##  ##    ##     ##       
+##       ##     ## ##   ###    ##            ##    ##  ##   ##      ##       
+##        #######  ##    ##    ##             ######  #### ######## ######## 
+*/
+
+#spine .title-and-subtitle {font-size:12pt; text-transform:uppercase; letter-spacing:.2em;}
+#back .backcover {font-size:15pt; letter-spacing:.05em;}
+#back .logo-and-website p {font-size:12pt; letter-spacing:.05em;}
+#front .title-and-subtitle {line-height:2;}
+#front .title-and-subtitle h1,
+#front .title-and-subtitle p {font-size:17pt; letter-spacing:.2em;}
+
+/*
+ ######   #######  ##        #######  ########   ######  
+##    ## ##     ## ##       ##     ## ##     ## ##    ## 
+##       ##     ## ##       ##     ## ##     ## ##       
+##       ##     ## ##       ##     ## ########   ######  
+##       ##     ## ##       ##     ## ##   ##         ## 
+##    ## ##     ## ##       ##     ## ##    ##  ##    ## 
+ ######   #######  ########  #######  ##     ##  ######  
+*/
+
+.logo:before,
+.icon-bookmark,
+#spine time:before,
+#back .logo-and-website p {color:THEME;/*($theme)*/}
+
+@page colorful { 
+  background:THEME;/*($theme)*/
+}
+
+m4_ifelse(COLORFUL, `1', `
+body {
+  page:colorful;
+  color:THEMEOPPOSITE;/*($themeOpposite)*/
+}
+.logo:before,
+.icon-bookmark,
+#spine time:before,
+#back .logo-and-website p {color:THEMEOPPOSITE;/*($themeOpposite)*/}
+
+#front.center .imgs .avatar .img,
+#front.mozaic .imgs .img,
+#front.timeline .imgs .avatar .img {border-color:THEME;/*($theme)*/}
+
+#front.center .imgs .avatar .title-and-subtitle h1:before,
+#front.center .imgs .avatar .title-and-subtitle h1:after,
+#front.full .imgs .avatar .title-and-subtitle h1:after {background:THEMEOPPOSITE;/*($themeOpposite)*/}
+',)
