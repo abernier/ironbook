@@ -21,7 +21,7 @@ function catchNext(asyncMidd) {
 }
 
 app.get('/', (req, res, next) => {
-  res.send(`curl -XPOST -F 'tarball=@/Users/abernier/tmp/course.tar.gz' https://ironboook.herokuapp.com/ >~/Desktop/ironbook.pdf`)
+  res.send(`<code>curl -XPOST -F 'tarball=@/Users/abernier/tmp/course.tar.gz' https://ironboook.herokuapp.com/ >~/Desktop/ironbook.pdf</code>`)
 })
 
 app.post('/', upload.single('tarball'), catchNext(async (req, res, next) => {
