@@ -34,16 +34,16 @@
 # CMD ["yarn", "start"]
 
 FROM yeslogic/prince:13.3-debian-10
-RUN apt-get update && apt-get install -y curl gnupg && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
-    apt-get update && apt-get install -y nodejs yarn make m4 bc
+
+RUN apt-get update && apt-get install -y nodejs npm make m4 bc
 
 WORKDIR /app
 
-COPY package.json yarn.lock ./
-RUN yarn install
+COPY package.json package-lock.json ./
+RUN npm install
 
 COPY . ./  
 
 EXPOSE 3000
 ENTRYPOINT [ "/usr/bin/env" ]
-CMD ["yarn", "start"]
+CMD ["npm", "start"]
