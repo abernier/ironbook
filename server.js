@@ -22,15 +22,10 @@ app.use(function (req, res, next) {
 const bodyParser = require('body-parser');
 app.use(bodyParser.json());
 
-function catchNext(asyncMidd) {
-  return (...args) => {
-    const rethrow = err => {throw err}
-    const next = args[args.length-1] // last arg
-    
-    // execute the async middleware catching an error to next
-    asyncMidd(...args).catch(next || rethrow)
-  }
-}
+var cors = require('cors');
+app.use(cors({
+  exposedHeaders: ['Location'] //see: https://stackoverflow.com/questions/5822985/cross-domain-resource-sharing-get-refused-to-get-unsafe-header-etag-from-re
+}));
 
 //
 // Kue
@@ -59,6 +54,20 @@ function enqueueBook(params, cb) {
 
     cb(null, job);
   });
+}
+
+//
+// Routes
+//
+
+function catchNext(asyncMidd) {
+  return (...args) => {
+    const rethrow = err => {throw err}
+    const next = args[args.length-1] // last arg
+    
+    // execute the async middleware catching an error to next
+    asyncMidd(...args).catch(next || rethrow)
+  }
 }
 
 app.get('/', (req, res, next) => {
