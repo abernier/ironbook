@@ -1,0 +1,23 @@
+#!/bin/sh
+
+#
+# 1. Extract all easyplvrenderer_* environment/shell variables
+#
+
+regex="^ironbook_"
+
+ENVFILE=$(mktemp /tmp/env.XXXXXXXXXX)
+set |grep "$regex" >"$ENVFILE"
+
+#
+# 2. Source in order:
+#   - all env*.sh files passed in arguments
+#   - generated $ENVFILE from 1
+#
+
+for i in $@; do
+  test -f "$i" && . "$i";
+done
+. "$ENVFILE"
+
+set | grep "$regex"

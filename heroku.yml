@@ -1,3 +1,9 @@
 build:
   docker:
     web: Dockerfile
+run:
+  web: npm run start-www
+  worker:
+    command:
+      - npm run start-worker
+    image: web

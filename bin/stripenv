@@ -1,0 +1,11 @@
+#!/bin/sh
+
+#
+# remove quotes from ./bin/env output due to compose bug/limitation (see: https://github.com/docker/compose/issues/5494)
+#
+while read LINE; do
+  key="$(echo "$LINE" | cut -d= -f1)"
+  val="$(echo "$LINE" | cut -d= -f2)"
+  val="$(echo $val | sed "s/^['\"]//" | sed "s/['\"]$//")" # remove eventual leading and trailing single quotes ' or "
+  echo "$key=$val"
+done
