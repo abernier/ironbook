@@ -15,7 +15,7 @@
   "dependencies": {
     "aws-sdk": "^2.318.0",
     "body-parser": "^1.19.0",
-    "cors": "^2.8.5",
+    "cors": "^2.8.4",
     "express": "^4.17.1",
     "handlebars": "^4.7.6",
     "kue": "^0.11.6",
