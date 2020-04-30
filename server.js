@@ -6,7 +6,7 @@ const spawn = require('child_process').spawn
 
 const express = require('express')
 var multer  = require('multer')
-var upload = multer({ dest: 'tmp' })
+var upload = multer({ dest: os.tmpdir() || 'tmp' })
 
 const app = express()
 
@@ -27,15 +27,37 @@ app.get('/', (req, res, next) => {
 app.post('/', upload.single('tarball'), catchNext(async (req, res, next) => {
   console.log(req.file.path)
 
-  // extract tar.gz
+  //
+  // Extract tar.gz
+  //
+  // ⚠️ Depending on wether the archive comes from `md2oedx` or studio.ironhack.school, it will have a leading `course` folder
+  // Script here take this into account and avoid this problem
+  //
+  //   1. Rename /tmp/abcd uploaded file into /tmp/abcd.tar.gz
+  //   2. Extract it to /tmp/abcd/x
+  //   3. Find the `chapter/` parent dir and move it to /tmp/abcd/course
+  //   4. remove /tmp/abcd/x
+  //
+  const rootDirCourseFolderName = 'course'
   await exec(`
-              mv ${req.file.path} ${req.file.path}.tar.gz && \
-              mkdir -p ${req.file.path}/course && \
-              tar -zxvf ${req.file.path}.tar.gz -C ${req.file.path}/course
-            `)
+    mv ${req.file.path} ${req.file.path}.tar.gz && \
+    mkdir -p ${req.file.path}/x && tar -xzvf ${req.file.path}.tar.gz -C ${req.file.path}/x && \
+    mv  $(dirname $(find ${req.file.path}/x -type d -name chapter)) ${req.file.path}/${rootDirCourseFolderName} && \
+    rm -rf ${req.file.path}/x
+  `)
 
+  //
   // make the PDF
-  make = spawn('make', [`${req.file.path}/public/pages.pdf`], { stdio: 'inherit' }); // see: https://stackoverflow.com/a/43477289/133327
+  //
+
+  // https://stackoverflow.com/a/27716861/133327
+  var env = Object.create( process.env );
+  env.COURSEXMLRELPATH = `${rootDirCourseFolderName}/course.xml`;
+
+  make = spawn(`make`, [`${req.file.path}/public/pages.pdf`], {
+    stdio: 'inherit', // see: https://stackoverflow.com/a/43477289/133327
+    env
+  });
   make.on('exit', function (code) {
     // console.log('code', code)
     if (code !== 0) {
