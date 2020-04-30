@@ -3,6 +3,7 @@ const path = require('path')
 const util = require('util')
 const exec = util.promisify(require('child_process').exec)
 const spawn = require('child_process').spawn
+const os = require('os')
 
 const express = require('express')
 var multer  = require('multer')
@@ -31,7 +32,7 @@ app.post('/', upload.single('tarball'), catchNext(async (req, res, next) => {
   // Extract tar.gz
   //
   // ⚠️ Depending on wether the archive comes from `md2oedx` or studio.ironhack.school, it will have a leading `course` folder
-  // Script here take this into account and avoid this problem
+  // Script here take this into account and avoid this problem: we search for `chapter/` folder and take the parent folder.
   //
   //   1. Rename /tmp/abcd uploaded file into /tmp/abcd.tar.gz
   //   2. Extract it to /tmp/abcd/x
