@@ -256,13 +256,16 @@ app.get('/updates/:jobid', function (req, res, next) {
           data: {error: errmsg}
         });
       }
-      function onJobProgress(id, progress) {
+      function onJobProgress(id, progress, data) {
         if (id !== jobid || closed) return;
         
-        console.log('[Job] Job #%s is making good progresses: %s', id, progress)
+        console.log('[Job] Job #%s is making good progresses: %s', id, progress, data)
 
         sse.write({
-          data: {progress: progress}
+          data: {
+            progress: progress,
+            step: data.step
+          }
         });
       }
       queue.on('job complete', waitingForJobToComplete)

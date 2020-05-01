@@ -25,8 +25,8 @@ function jobUpdate(id, options = {}) {
         if (data.result) {
           resolve(data.result);
           eventSource.close();
-        } else if (data.progress) {
-          options.progress && options.progress(data.progress)
+        } else if (data.progress >= 0) {
+          options.progress && options.progress(data)
         } else {
           //console.log('message', data)
         }

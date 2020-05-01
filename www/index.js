@@ -23,6 +23,7 @@ function step(num) {
 const $body = document.querySelector('body')
 const $input = document.querySelector('input')
 const $progress = document.querySelector('.progress')
+const $step = document.querySelector('.step')
 const $download = document.querySelector('.download')
 const $again = document.querySelector('.again')
 
@@ -33,14 +34,26 @@ $input.onchange = async function (e) {
   step(1)
 
   let started = false;
-  function progress(progress) {
+  function progress(data) {
     if (!started) {
       // first time progress is executed!
       step(2)
       started = true
     }
 
-    $progress.innerText = progress
+    const i18n = {
+      'init': "",
+      'tgz:downloaded': "Switching on the printer",
+      'prince:scripts': "Feeding with paper",
+      'prince:prepare': "Changing the yellow cartridge",
+      'prince:convert': "Cleaning the print heads",
+      'prince:processing': "Sheets output from the printer",
+      's3:upload': "Binding the book",
+      'done': "Ironbook complete"
+    }
+
+    $progress.innerText = data.progress
+    $step.innerText = i18n[data.step] || "wait"
   }
 
   console.log('onchange', $input.files)

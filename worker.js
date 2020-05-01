@@ -8,7 +8,9 @@ const util = require('util')
 const exec = util.promisify(require('child_process').exec)
 const spawn = require('child_process').spawn
 
-async function buildPDF(tarballPath, job) {
+async function buildPDF(tarballPath, job, options = {}) {
+  options.progressRange || (options.progressRange = [0, 100])
+
   //
   // Extract tar.gz
   //
@@ -45,19 +47,28 @@ async function buildPDF(tarballPath, job) {
 
       let pass = 1
       const passes = 2;
+      let prg;
 
-      let prg = 0;
+      const initialProgress = options.progressRange[0]
+      const finalProgress = options.progressRange[1]
 
-      function tick() {
-        const progress = 100 * (prg + 100*(pass-1)) / (100*passes) // (40 + 100) / 200
-        console.log('tick', progress)
-
-        job.progress(progress, 100); // make the job.progress
+      function intprog(x, a, b) {
+        return a + (b-a) * x/100
       }
 
       make.stderr.on('data', data => {
         data = `${data}`
-        // console.log('data err', data)
+        console.log(data)
+
+        if (data.includes('Running scripts')) {
+          job.progress(intprog(3, initialProgress, finalProgress), 100, {step: 'prince:scripts'});
+        }
+        if (data.includes('sta|Preparing document')) {
+          job.progress(intprog(10, initialProgress, finalProgress), 100, {step: 'prince:prepare'});
+        }
+        if (data.includes('sta|Converting document')) {
+          job.progress(intprog(36, initialProgress, finalProgress), 100, {step: 'prince:convert'});
+        }
 
         // dealing with 2 passes
         if (data.includes("sta|Resolving cross-references")) {
@@ -68,15 +79,17 @@ async function buildPDF(tarballPath, job) {
         prgMatches = data.match(/prg\|([0-9]*)/)
         if (prgMatches) {
           prg = Number(prgMatches[1])
-        }
+          const prgprog = 100 * (prg + 100*(pass-1)) / (100*passes) // (40 + 100) / 200
 
-        tick()
+          const localProgress = intprog(prgprog, 36, 100)
+
+          job.progress(intprog(localProgress, initialProgress, finalProgress), 100, {step: 'prince:processing'})
+        }
       })
 
       make.stdout.on('data', data => {
-        // console.log('data out', ""+data)
-
-        tick()
+        data = `${data}`
+        console.log(data)
       })
 
       make.on('exit', function (code) {
@@ -123,6 +136,8 @@ async function start(cb) {
       try {
         console.log('Now processing job', JSON.stringify(job, null, 4));
 
+        job.progress(1, 100, {step: 'init'})
+
         //
         // 1. Download the course.tar.gz file from S3
         //
@@ -132,18 +147,23 @@ async function start(cb) {
         }
 
         const tarballPath = await s3.download(job.data.tarball);
+        job.progress(3, 100, {step: 'tgz:downloaded'})
 
         //
         // 2. Build the PDF with
         //
 
-        const dst = await buildPDF(tarballPath, job) // pass the `job` in in order to call `job.progress` inside
+        const dst = await buildPDF(tarballPath, job, {
+          progressRange: [3, 85]
+        }) // pass the `job` in in order to call `job.progress` inside
 
         //
         // 3. Upload to S3
         //
 
         console.log(`Uploading ${dst} to S3...`)
+
+        job.progress(85, 100, {step: 's3:upload'})
 
         const loc = (await s3.upload({
           name: `${job.data.hash}.pdf`,
@@ -152,6 +172,9 @@ async function start(cb) {
         })).Location;
 
         console.log('Successfully uploaded to S3, persisting URL to `job.result`: %s', loc);
+
+        job.progress(100, 100, {step: 'done'})
+
         done(null, loc)
       } catch(err) {
         console.error(`Error while processing job ${job.id}`, err)
