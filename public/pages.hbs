@@ -81,6 +81,12 @@
   (function () {
     var links = Array.prototype.slice.call(document.querySelectorAll('.page.lesson a[href]'), 0);
     for (var i = 0; i<links.length; i++) {
+      //
+      // For each link, append just after:
+      //
+      // <span class="footnote">http://google.com</span>
+      //
+
       var span = document.createElement('span');
       span.textContent = links[i].href;
       span.className = "footnote";
@@ -99,6 +105,14 @@
   (function () {
     var iframes = Array.prototype.slice.call(document.querySelectorAll('iframe[src]'), 0);
     for (var i = 0; i<iframes.length; i++) {
+      //
+      // For each iframe, append just after:
+      //
+      // <div>
+      //   <span class="footnote">http://codepen.io/ironhack/embed/YGVJAw/?height=265&theme-id=0&default-tab=js%2Cre-</span>
+      // </div>
+      //
+
       var span = document.createElement('span');
       span.textContent = iframes[i].getAttribute('src');
       span.className = "footnote";
