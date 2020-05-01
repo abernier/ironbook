@@ -213,6 +213,13 @@ app.get('/updates/:jobid', function (req, res, next) {
     // once the connection is closed from the client: `eventSource.close()`
     //
 
+    function tick() {
+      sse.write({
+        data: {tic: 'tac'}
+      });
+    }
+    const tickInt = setInterval(tick, 1000)
+
     let closed;
     res.on('close', () => {
       closed = true;
@@ -220,11 +227,14 @@ app.get('/updates/:jobid', function (req, res, next) {
       console.log(`Closing /updates/${jobid} connection`)
       sse.end()
       sse.unpipe(res)
+
+      clearInterval(tickInt);
     })
     
     let state = job.state();
     console.log('job retrieved', job.id, state);
 
+    
 
     if (state !== 'complete') {
       //
