@@ -8,7 +8,7 @@ const util = require('util')
 const exec = util.promisify(require('child_process').exec)
 const spawn = require('child_process').spawn
 
-async function buildPDF(tarballPath) {
+async function buildPDF(tarballPath, job) {
   //
   // Extract tar.gz
   //
@@ -39,8 +39,44 @@ async function buildPDF(tarballPath) {
       env.COURSEXMLRELPATH = `${rootDirCourseFolderName}/course.xml`;
 
       make = spawn(`make`, [`${tarballPath}/public/pages.pdf`], {
-        stdio: 'inherit', // see: https://stackoverflow.com/a/43477289/133327
+        //stdio: 'inherit', // see: https://stackoverflow.com/a/43477289/133327
         env
+      })
+
+      let pass = 1
+      const passes = 2;
+
+      let prg = 0;
+
+      function tick() {
+        const progress = 100 * (prg + 100*(pass-1)) / (100*passes) // (40 + 100) / 200
+        console.log('tick', progress)
+
+        job.progress(progress, 100); // make the job.progress
+      }
+
+      make.stderr.on('data', data => {
+        data = `${data}`
+        // console.log('data err', data)
+
+        // dealing with 2 passes
+        if (data.includes("sta|Resolving cross-references")) {
+          pass = 2
+        }
+
+        // `prince --server` outputs lines like: "prg|40"
+        prgMatches = data.match(/prg\|([0-9]*)/)
+        if (prgMatches) {
+          prg = Number(prgMatches[1])
+        }
+
+        tick()
+      })
+
+      make.stdout.on('data', data => {
+        // console.log('data out', ""+data)
+
+        tick()
       })
 
       make.on('exit', function (code) {
@@ -65,6 +101,10 @@ async function start(cb) {
 
     const s3 = require('./s3');
 
+    //
+    // create the queue
+    //
+
     const kue = require('kue'); 
     const redis_uri = require('url').parse(require('url').format(process.env.REDIS_URL || conf.redis_uri));
     const queue = kue.createQueue({
@@ -75,12 +115,16 @@ async function start(cb) {
       console.err('Oops... ', err)
     })
 
+    //
+    // process the queue
+    //
+
     queue.process('book', 1, async function (job, done) {
       try {
-        console.log('Now processing job', JSON.stringify(job.data, null, 4));
+        console.log('Now processing job', JSON.stringify(job, null, 4));
 
         //
-        // Download the course.tar.gz file from S3
+        // 1. Download the course.tar.gz file from S3
         //
 
         if (!job.data.tarball) {
@@ -90,13 +134,13 @@ async function start(cb) {
         const tarballPath = await s3.download(job.data.tarball);
 
         //
-        // Build the PDF with
+        // 2. Build the PDF with
         //
 
-        const dst = await buildPDF(tarballPath)
+        const dst = await buildPDF(tarballPath, job) // pass the `job` in in order to call `job.progress` inside
 
         //
-        // Upload to S3
+        // 3. Upload to S3
         //
 
         console.log(`Uploading ${dst} to S3...`)

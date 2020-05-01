@@ -27,6 +27,13 @@ app.use(cors({
   exposedHeaders: ['Location'] //see: https://stackoverflow.com/questions/5822985/cross-domain-resource-sharing-get-refused-to-get-unsafe-header-etag-from-re
 }));
 
+// serve public directory: http://expressjs.com/en/resources/middleware/serve-static.html
+var staticMiddleware = express.static(__dirname + '/www', {
+  cacheControl: false,
+  etag: false
+});
+app.use(staticMiddleware);
+
 //
 // Kue
 //
@@ -70,9 +77,14 @@ function catchNext(asyncMidd) {
   }
 }
 
-app.get('/', (req, res, next) => {
-  res.send(`<code>curl -XPOST -F 'tarball=@/Users/abernier/tmp/course.tar.gz' https://ironboook.herokuapp.com/ >~/Desktop/ironbook.pdf</code>`)
-})
+/*
+     ██╗
+    ██╔╝
+   ██╔╝ 
+  ██╔╝  
+ ██╔╝   
+ ╚═╝    
+ */
 
 app.post('/', upload.single('tarball'), catchNext(async function (req, res, next) {
   console.log('post /', req.body, req.file)
@@ -197,6 +209,10 @@ app.get('/updates/:jobid', function (req, res, next) {
     const sse = new SseStream(req)
     sse.pipe(res)
 
+    //
+    // once the connection is closed from the client: `eventSource.close()`
+    //
+
     let closed;
     res.on('close', () => {
       closed = true;
@@ -223,6 +239,7 @@ app.get('/updates/:jobid', function (req, res, next) {
 
         queue.off('job complete', waitingForJobToComplete);
         queue.off('job failed', waitingForJobToFail);
+        queue.off('job progress', onJobProgress);
         sse.write({
           data: {result: result}
         });
@@ -234,12 +251,23 @@ app.get('/updates/:jobid', function (req, res, next) {
 
         queue.off('job complete', waitingForJobToComplete);
         queue.off('job failed', waitingForJobToFail);
+        queue.off('job progress', onJobProgress);
         sse.write({
           data: {error: errmsg}
         });
       }
+      function onJobProgress(id, progress) {
+        if (id !== jobid || closed) return;
+        
+        console.log('[Job] Job #%s is making good progresses: %s', id, progress)
+
+        sse.write({
+          data: {progress: progress}
+        });
+      }
       queue.on('job complete', waitingForJobToComplete)
       queue.on('job failed', waitingForJobToFail)
+      queue.on('job progress', onJobProgress)
       
     } else {
       //

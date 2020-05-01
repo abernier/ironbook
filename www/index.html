@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&family=Roboto+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/index.css?v1">
+</head>
+<body class="select">
+  <h1 id="masthead"><a href="/">Ironbook</a></h1>
+  
+  <svg role="img" class="icon">
+    <use class="step--select" xlink:href="/icons.svg#hand"/>
+    <use class="step--queued" xlink:href="/icons.svg#dog"/>
+    <use class="step--processing" xlink:href="/icons.svg#print"/>
+    <use class="step--done" xlink:href="/icons.svg#pdf"/>
+  </svg>
+
+  <p class="message step--select"><label class="btn">Select <input type="file"></label> your <samp>course.tar.gz</samp> file</p>
+  <p class="message step--queued">Your ironbook has been queued</p>
+  <p class="message step--processing">Your ironbook is <span class="progress">0</span>% </p>
+  <p class="message step--done">You can <a href="" class="download" target="_blank">read</a> it now</p>
+
+  <p class="hint step--select">Export it from the <a href="http://studio.ironhack.school">studio</a></p>
+  <p class="hint step--queued"><small>Wait, it will start automatically within seconds</small></p>
+  <p class="hint step--processing">It generally takes 1-2 mins</p>
+  <p class="hint step--done">It will open in a new tab</p>
+
+  <script type="module" src="/index.js"></script>
+</body>
+</html>
