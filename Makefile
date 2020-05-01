@@ -3,7 +3,7 @@
 
 %/public/pages.pdf: %/public %/public/pages.css %/public/pages.html
 	# prince --javascript --debug --pdf-profile="PDF/X-3:2002" $* -o $@
-	prince --javascript --server $*/public/pages.html -o $@
+	prince --javascript --server --debug $*/public/pages.html -o $@
 
 %/public/pages.html: %/public hbs
 	./hbs $*/public/pages.hbs $*/$(COURSEXMLRELPATH) > $@

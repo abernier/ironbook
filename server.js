@@ -213,12 +213,13 @@ app.get('/updates/:jobid', function (req, res, next) {
     // once the connection is closed from the client: `eventSource.close()`
     //
 
+    // prevent H15 idle connection from Heroku (see https://devcenter.heroku.com/articles/request-timeout#long-polling-and-streaming-responses)
     function tick() {
       sse.write({
         data: {tic: 'tac'}
       });
     }
-    const tickInt = setInterval(tick, 1000)
+    const tickInt = setInterval(tick, 30000)
 
     let closed;
     res.on('close', () => {

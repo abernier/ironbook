@@ -112,12 +112,13 @@
   }).call(this);
 
   //
-  // iframes footnotes
+  // disabling iframes
   //
 
   (function () {
-    var iframes = Array.prototype.slice.call(document.querySelectorAll('iframe[src*="repl.it"]'), 0);
+    var iframes = Array.prototype.slice.call(document.querySelectorAll('iframe'), 0);
     for (var i = 0; i<iframes.length; i++) {
+      console.log('disabling', iframes[i].getAttribute('src'))
       iframes[i].setAttribute('src', 'about:blank');
     }
   }).call(this);
