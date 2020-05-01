@@ -53,8 +53,8 @@ $input.onchange = async function (e) {
   $download.href = url
 }
 
-$again.onclick = function (e) {
-  e.preventDefault()
+// $again.onclick = function (e) {
+//   e.preventDefault()
 
-  step(0)
-}
+//   step(0)
+// }
