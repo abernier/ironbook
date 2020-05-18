@@ -30,40 +30,43 @@ const $again = document.querySelector('.again')
 step(0)
 
 $input.onchange = async function (e) {
+  try {
+    step(1)
 
-  step(1)
+    let started = false;
+    function progress(data) {
+      if (!started) {
+        // first time progress is executed!
+        step(2)
+        started = true
+      }
 
-  let started = false;
-  function progress(data) {
-    if (!started) {
-      // first time progress is executed!
-      step(2)
-      started = true
+      const i18n = {
+        'init': "",
+        'tgz:downloaded': "Switching on the printer",
+        'prince:scripts': "Feeding with paper",
+        'prince:prepare': "Changing the yellow cartridge",
+        'prince:convert': "Cleaning the print heads",
+        'prince:processing': "Sheets output from the printer",
+        's3:upload': "Binding the book",
+        'done': "Ironbook complete"
+      }
+
+      $progress.innerText = data.progress
+      $step.innerText = i18n[data.step] || "wait"
     }
 
-    const i18n = {
-      'init': "",
-      'tgz:downloaded': "Switching on the printer",
-      'prince:scripts': "Feeding with paper",
-      'prince:prepare': "Changing the yellow cartridge",
-      'prince:convert': "Cleaning the print heads",
-      'prince:processing': "Sheets output from the printer",
-      's3:upload': "Binding the book",
-      'done': "Ironbook complete"
-    }
+    console.log('onchange', $input.files)
+    const url = await ironbook.post($input.files[0], {progress})
 
-    $progress.innerText = data.progress
-    $step.innerText = i18n[data.step] || "wait"
+    step(3)
+    console.log('PDF', url)
+
+    // 
+    $download.href = url
+  } catch(err) {
+    console.error('💥', err)
   }
-
-  console.log('onchange', $input.files)
-  const url = await ironbook.post($input.files[0], {progress})
-
-  step(3)
-  console.log('PDF', url)
-
-  // 
-  $download.href = url
 }
 
 // $again.onclick = function (e) {

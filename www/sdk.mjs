@@ -55,7 +55,7 @@ function post(file, options) {
     }
     
     let xhr = new XMLHttpRequest();
-    xhr.responseType = 'blob';
+    xhr.responseType = 'json';
     xhr.open("POST", `${ENDPOINT}/`);
 
     xhr.onload = async function () {
