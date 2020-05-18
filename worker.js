@@ -4,31 +4,22 @@ const WORKERS = process.env.WEB_CONCURRENCY || 1
 const conf = require('./conf')
 console.log('conf=', JSON.stringify(conf, null, 4));
 
+const os = require('os')
+
 const util = require('util')
 const exec = util.promisify(require('child_process').exec)
 const spawn = require('child_process').spawn
 
+const uuid = require('uuid')
+const tmpdir = os.tmpdir()
+
 async function buildPDF(tarballPath, job, options = {}) {
   options.progressRange || (options.progressRange = [0, 100])
 
-  //
-  // Extract tar.gz
-  //
-  // ⚠️ Depending on wether the archive comes from `md2oedx` or studio.ironhack.school, it will have a leading `course` folder
-  // Script here take this into account and avoid this problem: we search for `chapter/` folder and take the parent folder.
-  //
-  //   1. Rename /tmp/abcd uploaded file into /tmp/abcd.tar.gz
-  //   2. Extract it to /tmp/abcd/x
-  //   3. Find the `chapter/` parent dir and move it to /tmp/abcd/course
-  //   4. remove /tmp/abcd/x
-  //
+  // Extract the tarball
   const rootDirCourseFolderName = 'course'
-  await exec(`
-    mv ${tarballPath} ${tarballPath}.tar.gz && \
-    mkdir -p ${tarballPath}/x && tar -xzvf ${tarballPath}.tar.gz -C ${tarballPath}/x && \
-    mv $(dirname $(find ${tarballPath}/x -type d -name chapter)) ${tarballPath}/${rootDirCourseFolderName} && \
-    rm -rf ${tarballPath}/x
-  `)
+  const dstdir = `${tmpdir}/${uuid.v4()}`
+  await exec(`./bin/extract.sh ${tarballPath} ${dstdir}/${rootDirCourseFolderName}`)
 
   //
   // make the PDF
@@ -40,7 +31,7 @@ async function buildPDF(tarballPath, job, options = {}) {
       var env = Object.create( process.env );
       env.COURSEXMLRELPATH = `${rootDirCourseFolderName}/course.xml`;
 
-      make = spawn(`make`, [`${tarballPath}/public/pages.pdf`], {
+      make = spawn(`make`, [`${dstdir}/public/pages.pdf`], {
         //stdio: 'inherit', // see: https://stackoverflow.com/a/43477289/133327
         env
       })
@@ -99,7 +90,7 @@ async function buildPDF(tarballPath, job, options = {}) {
         }
 
         // serve it
-        resolve(`${tarballPath}/public/pages.pdf`)
+        resolve(`${dstdir}/public/pages.pdf`)
       })
     })
   }
