@@ -13,9 +13,11 @@ ironbook.configure({
 // 
 //
 
-const steps = ['select', 'queued', 'processing', 'done']
+const steps = ['select', 'queued', 'processing', 'done', 'err']
 
 function step(num) {
+  num = Math.min(num, steps.length - 1)
+
   $body.classList.remove(...steps)
   $body.classList.add(steps[num])
 }
@@ -66,6 +68,7 @@ $input.onchange = async function (e) {
     $download.href = url
   } catch(err) {
     console.error('💥', err)
+    step(99)
   }
 }
 

@@ -26,17 +26,20 @@
     <use class="step--queued" xlink:href="/icons.svg#dog"/>
     <use class="step--processing" xlink:href="/icons.svg#print"/>
     <use class="step--done" xlink:href="/icons.svg#pdf"/>
+    <use class="step--err" xlink:href="/icons.svg#draft"/>
   </svg>
 
   <p class="message step--select"><label class="btn">Select <input type="file" accept="application/gzip"></label> your <samp>course.tar.gz</samp> file</p>
   <p class="message step--queued">Your ironbook has been queued</p>
   <p class="message step--processing">Your ironbook is <span class="progress">0</span>%</p>
   <p class="message step--done">You can <a href="" class="download" target="_blank">read</a> it now</p>
+  <p class="message step--err">Something bad happened</p>
 
   <p class="hint step--select">Export it from the <a href="http://studio.ironhack.school" target="_blank">studio</a></p>
   <p class="hint step--queued"><small>Wait, it will start shortly...</small></p>
   <p class="hint step--processing step">It generally takes 1-2 mins</p>
   <p class="hint step--done">It will open in a new tab</p>
+  <p class="hint step--err">Open the console to see the error</p>
 
   <script type="module" src="/index.js?v=2"></script>
 </body>

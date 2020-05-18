@@ -79,3 +79,4 @@ body.select [class*="step--"]:not(.step--select) {display:none;}
 body.queued [class*="step--"]:not(.step--queued) {display:none;}
 body.processing [class*="step--"]:not(.step--processing) {display:none;}
 body.done [class*="step--"]:not(.step--done) {display:none;}
+body.err [class*="step--"]:not(.step--err) {display:none;}
