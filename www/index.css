@@ -127,7 +127,7 @@ article {width:100%;}
 
 input[type="checkbox"] {font-size:inherit;}
 
-.chapter ul label:hover {cursor:pointer; background:rgba(255,255,255,.25);}
+.chapter ul label:hover {cursor:pointer; background:rgba(255,255,255,.5);}
 
 .btn.round.disabled {
   cursor:not-allowed; color:gray;
