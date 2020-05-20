@@ -1,3 +1,7 @@
+```sh
+curl -XPOST -F 'tarball=@/Users/abernier/tmp/course.tar.gz' -F 'filter[]=' -F 'filter[]=' http://localhost:3000/
+```
+
 ## INSTALL
 
 Requirements:

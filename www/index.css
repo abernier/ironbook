@@ -1,7 +1,8 @@
 *, :before, :after {box-sizing:border-box;}
 
 :root {
-  font-size: 16px;
+  font-size:16px;
+  --gutter: 1.5rem;
 }
 body {
   font-size: 100%;
@@ -13,14 +14,15 @@ body {
 }
 @media (min-width: 1400px) {
   body {
-    font-size: 36px;
+    font-size: 30px;
   }
 }
 
 body {
   margin:0;
 
-  padding-left:1.5rem;padding-right:1.5rem;
+  /*padding-left:var(--gutter);padding-right:var(--gutter);*/
+  padding-top:calc(2 * var(--gutter) + 1em);padding-bottom:calc(2 * var(--gutter) + 1em);
 
   background:#eee;
 
@@ -50,7 +52,7 @@ svg.icon {
 
 h1#masthead {
   margin-top:0;margin-bottom:0;
-  position:absolute; right:0;top:0; margin:1em;
+  position:absolute; right:0;top:0; margin:1em var(--gutter);
   font-size:100%;
 }
 #masthead a {text-decoration:inherit;}
@@ -73,10 +75,67 @@ h1#masthead {
 
 label input[type="file"] {display:none;}
 
-.icon {font-size:1000%;}
+.bigicon {font-size:1000%;}
 
 body.select [class*="step--"]:not(.step--select) {display:none;}
+body.filter [class*="step--"]:not(.step--filter) {display:none;}
 body.queued [class*="step--"]:not(.step--queued) {display:none;}
 body.processing [class*="step--"]:not(.step--processing) {display:none;}
 body.done [class*="step--"]:not(.step--done) {display:none;}
 body.err [class*="step--"]:not(.step--err) {display:none;}
+
+.cbx {display:inline-block; vertical-align:middle; margin-top:-.1em;}
+.cbx [type="checkbox"] {display:none;}
+.cbx [type="checkbox"] +div {
+  width:1em;height:1em;
+  border:.1em solid;
+  margin-right:.25em;
+
+  position:relative;
+}
+.cbx [type="checkbox"] +div:after {
+  content:"";
+  display:block;width:180%;height:180%;
+  background:url("/tick.svg") center no-repeat; background-size:contain;
+  position:absolute;left:50%;top:50%; transform:translate(-30%,-70%);
+
+  opacity:0; pointer-events:none;
+
+  transition:opacity .15s;
+}
+.cbx [type="checkbox"]:checked +div:after {opacity:1;}
+
+
+input[type="checkbox"] ~ span {text-decoration:line-through;}
+input[type="checkbox"]:checked ~ span {text-decoration:inherit;}
+
+.toomuch {color:red;}
+
+article {width:100%;}
+
+.chapter h2 {font-size:100%;}
+
+.chapter ul {list-style:none; padding-left:0;}
+
+.chapter ul {text-align:left;}
+.chapter li, .chapter li label {display:block;}
+.chapter li label >.in {
+  max-width:20em; margin:0 auto;
+  padding-left:var(--gutter);padding-right:var(--gutter);
+  overflow:hidden;text-overflow:ellipsis; white-space:nowrap;
+}
+
+input[type="checkbox"] {font-size:inherit;}
+
+.chapter ul label:hover {cursor:pointer; background:rgba(255,255,255,.25);}
+
+.btn.round.disabled {
+  cursor:not-allowed; color:gray;
+}
+
+.round {
+  position:fixed; right:0; bottom:0; margin:var(--gutter);
+  font-size:150%;
+  background:rgba(255,255,255,.97);
+  text-decoration:none;
+}

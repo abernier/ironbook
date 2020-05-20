@@ -1,8 +1,17 @@
 const conf = require('./conf')
 
+const os = require('os')
+const path = require('path')
+const util = require('util')
+const exec = util.promisify(require('child_process').exec)
+
 const express = require('express')
+
 var multer  = require('multer')
-var upload = multer({ dest: /*os.tmpdir() ||*/ 'tmp' })
+const tmpdir = /*os.tmpdir() ||*/ path.resolve(__dirname, 'tmp')
+var upload = multer({ dest: os.tmpdir() })
+
+const xmlcourse2json = require('./xmlcourse2json.js')
 
 const app = express()
 
@@ -20,6 +29,7 @@ app.use(function (req, res, next) {
 
 // body parser (see: http://expressjs.com/en/4x/api.html#req.body)
 const bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 var cors = require('cors');
@@ -27,12 +37,28 @@ app.use(cors({
   exposedHeaders: ['Location'] //see: https://stackoverflow.com/questions/5822985/cross-domain-resource-sharing-get-refused-to-get-unsafe-header-etag-from-re
 }));
 
+//
 // serve public directory: http://expressjs.com/en/resources/middleware/serve-static.html
+//
 var staticMiddleware = express.static(__dirname + '/www', {
   cacheControl: false,
   etag: false
 });
 app.use(staticMiddleware);
+
+//
+// Default 'Accept' and 'Content-Type'
+//
+app.use(function (req, res, next) {
+  req.headers['accept'] = req.headers['accept'] || 'application/json';
+
+  // if 'Accept: application/json' and 'Content-Type' is not set => defaults to 'application/json'
+  if (req.headers['accept'] === 'application/json' && !req.headers['content-type']) {
+    req.headers['content-type'] = req.headers['content-type'] || 'application/json';
+  }
+
+  next();
+});
 
 //
 // Kue
@@ -89,76 +115,108 @@ function catchNext(asyncMidd) {
 app.post('/', upload.single('tarball'), catchNext(async function (req, res, next) {
   console.log('post /', req.body, req.file)
 
+  const {filter = []} = req.body
+
+
   if (!req.file) {
     const err = new Error('tarball file is required')
     err.status = 422
     throw err
   }
 
-  //
-  // Make a hash of the request params (req.file and req.body)
-  //
-
-  function sha1(path) {
-    return new Promise((resolve, reject) => {
-      const hash = require('crypto').createHash('sha1')
-      const rs = require('fs').createReadStream(path)
-      rs.on('error', reject)
-      rs.on('data', chunk => hash.update(chunk))
-      rs.on('end', () => resolve(hash.digest('hex')))
-    })
-  }
-  
-  function md5(data) {
-    return require('crypto').createHash("md5").update(data).digest("hex");
-  }
-
-  const checksum = await sha1(req.file.path)
+  //const checksum = await sha1(req.file.path)
+  const checksum = req.file.filename
   console.log('checksum', checksum)
 
-  let hash = md5(JSON.stringify({
-    tarball: checksum,
-    body: req.body
-  }));
-  console.log('hash', hash);
-
   //
-  //
+  // Extract the tarball and validate the `course.xml` file:
+  //   - it must be present
+  //   - it must
   //
 
-  let body = req.body;
+  const rootDirCourseFolderName = 'course'
+  const dstdir = `${tmpdir}/${checksum}`
 
-  //let async = (req.header('Prefer') === 'respond-async');
-  let async = true
-  if (!async) {
-    console.log('sync')
-  } else {
-    console.log('async')
+  await exec(`./bin/extract.sh ${req.file.path} ${dstdir}/${rootDirCourseFolderName}`).catch(err => {
+    err.message = "Unexpected tarball"
+    err.status = 500;
+    throw err;
+  })
 
-    coursetgz = await require('./s3').upload({
-      name: hash,
-      path: req.file.path,
-      contentType: 'application/gzip' // https://superuser.com/questions/901962/what-is-the-correct-mime-type-for-a-tar-gz-file
+  const jsoncourse = await xmlcourse2json(`${dstdir}/${rootDirCourseFolderName}/course.xml`)
+  // console.log('jsoncourse', jsoncourse);
+
+  function listUnits(json, filter = []) {
+    let units = []; // flat list of units
+    let chapters = []; // list of chapters with `units` array inside
+    
+    json.course.chapter.forEach(chap => {
+      const chapter = {
+        name: chap.name,
+        units: []
+      }
+      chapters.push(chapter)
+
+      chap.sequential.forEach(seq => {
+        seq.vertical.forEach(vert => {
+          const unitid = vert.id;
+          if (!filter.includes(unitid)) {
+            units.push(vert) // only if not filtered
+            chapter.units.push(vert)
+          }
+          
+        })
+      })
     })
 
-    enqueueBook({
-      hash: hash,
-      headers: {
-        //'Accept': accept
-      },
-      body: req.body,
-      tarball: coursetgz.Location
-    }, function (er, job) {
-      if (er) return next(er);
-
-      //console.log('Ok, job is enqueued, id: ', job.id);
-
-      let url = `${req.protocol}://${req.get('host')}/queue/${job.id}`
-      console.log('url', url) 
-      res.header('Location', url).sendStatus(202);
-    });
-
+    return {units, chapters};
   }
+
+  const {units, chapters} = listUnits(jsoncourse, filter)
+  console.log('units', units.length);
+
+  const unitsLimit = Number(conf.unitslimit) || 100;
+  if (units.length > unitsLimit) {
+    const er = new Error('Too much units')
+    er.status = 422;
+    er.data = {
+      units,
+      chapters,
+      limit: unitsLimit
+    };
+    throw er
+  }
+
+  //
+  // Upload the tar.gz file to S3
+  //
+
+  coursetgz = await require('./s3').upload({
+    name: checksum,
+    path: req.file.path,
+    contentType: 'application/gzip' // https://superuser.com/questions/901962/what-is-the-correct-mime-type-for-a-tar-gz-file
+  })
+
+  //
+  // Create a job in the fifo
+  //
+
+  enqueueBook({
+    headers: {
+      //'Accept': accept
+    },
+    filter: filter,
+    tarball: coursetgz.Location
+  }, function (er, job) {
+    if (er) return next(er);
+
+    //console.log('Ok, job is enqueued, id: ', job.id);
+
+    let url = `${req.protocol}://${req.get('host')}/queue/${job.id}`
+    console.log('url', url) 
+    res.header('Location', url).sendStatus(202);
+  });
+
 }));
 
 /*
@@ -219,7 +277,7 @@ app.get('/updates/:jobid', function (req, res, next) {
         data: {tic: 'tac'}
       });
     }
-    const tickInt = setInterval(tick, 30000)
+    const tickInt = setInterval(tick, 30000) // send a tick every 30s
 
     let closed;
     res.on('close', () => {
@@ -301,6 +359,9 @@ app.get('/updates/:jobid', function (req, res, next) {
     
   });
 });
+
+const error = require('./middleware/error')
+app.use(error)
 
 const port = process.env.PORT || 3000
 const server = app.listen(port, () => console.log(`app listening on port ${port}`))

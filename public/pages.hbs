@@ -25,21 +25,19 @@
   <section class="page toc">
     <div class="bookmark">Table Of Content</div>
 
-    <h3 class="h">Module 1</h3>
-    {{#each lessons.m1}}{{>tocentry}}{{/each}}
-
-    <h3 class="h">Module 2</h3>
-    {{#each lessons.m2}}{{>tocentry}}{{/each}}
-    
-    <h3 class="h">Module 3</h3>
-    {{#each lessons.m3}}{{>tocentry}}{{/each}}
+    {{#each lessons as | chapter |}}
+      {{#if chapter.lessons.[0]}} {{! print chapter name only if at least one lesson !}}
+        <h3 class="h">{{chapter.name}}</h3>
+        {{#each chapter.lessons}}{{>tocentry}}{{/each}}
+      {{/if}}
+    {{/each}}
   </section>
   {{! END of TOC }}
 
   {{! lessons pages }}
   {{#*inline "lesson"}}
   <section id="{{id}}" class="page lesson">
-    <div class="bookmark">{{title}} ‒ Module {{module}}</div>
+    <div class="bookmark">{{title}}</div>
 
     <h1>{{title}}</h1>
 
@@ -49,9 +47,9 @@
   </section>
   {{/inline}}
 
-  {{#each lessons.m1}}{{>lesson module=1}}{{/each}}
-  {{#each lessons.m2}}{{>lesson module=2}}{{/each}}
-  {{#each lessons.m3}}{{>lesson module=3}}{{/each}}
+  {{#each lessons as | chapter |}}
+    {{#each chapter.lessons}}{{>lesson}}{{/each}}
+  {{/each}}
   {{! END of lessons pages }}
   
   <script src="highlight.min.js"></script>

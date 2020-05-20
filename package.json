@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "",
   "scripts": {
-    "start-www": "env `./bin/env ./env*.sh | ./bin/stripenv` sh -c 'node server'",
+    "start-www": "env `./bin/env ./env*.sh | ./bin/stripenv` sh -c 'node --inspect server'",
     "start-worker": "env `./bin/env ./env*.sh | ./bin/stripenv` sh -c 'node worker'"
   },
   "repository": {

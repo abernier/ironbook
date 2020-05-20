@@ -3,6 +3,8 @@ const path = require('path')
 
 const xml2js = require('xml2js');
 
+const {md5, sha1} = require('./helpers.js');
+
 async function xml2obj(filepath) {
   const xmlstr = fs.readFileSync(path.resolve(__dirname, filepath), 'utf-8')
 
@@ -27,6 +29,9 @@ async function main(xmlcoursepath) {
   const course = await xml2obj(`${dir}/course/${root.course.$.url_name}.xml`)
   //console.log(course);
 
+  const checksum = sha1(xmlcoursepath)
+
+  let i = 0;
   for (chap of course.course.chapter) {
     //console.log(chap)
 
@@ -38,6 +43,7 @@ async function main(xmlcoursepath) {
       sequential: []
     }
 
+    let j = 0;
     for (seq of chapter.chapter.sequential) {
       //console.log(seq)
 
@@ -49,12 +55,16 @@ async function main(xmlcoursepath) {
         vertical: []
       }
 
+      let k = 0;
       for (vert of sequential.sequential.vertical) {
         const vertical = await xml2obj(`${dir}/vertical/${vert.$.url_name}.xml`)
         // console.log(vertical)
 
+        const name = vertical.vertical.$.display_name;
+
         const o3 = {
-          name: vertical.vertical.$.display_name,
+          id: md5(`${checksum}_${i}.${j}.${k}-${name}`).substring(0,5), // generate an unique id
+          name,
           html: []
         }
 
@@ -68,12 +78,18 @@ async function main(xmlcoursepath) {
         }
 
         o2.vertical.push(o3)
+      
+        k++;
       }
 
       o.sequential.push(o2)
+
+      j++;
     }
 
     ret.course.chapter.push(o)
+
+    i++;
   }
 
   //console.log(JSON.stringify(ret, null, 2))

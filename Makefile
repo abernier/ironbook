@@ -6,7 +6,8 @@
 	prince --javascript --server --debug $*/public/pages.html -o $@
 
 %/public/pages.html: %/public hbs
-	./hbs $*/public/pages.hbs $*/$(COURSEXMLRELPATH) > $@
+	./hbs $*/public/pages.hbs $*/$(COURSEXMLRELPATH) $(UNITSFILTER) > $@
+	
 
 %/public/pages.css: %/public
 	m4 --prefix-builtins --include $*/public/ --debug $(addprefix --define=,$(M4OPTS)) $*/public/pages.m4.css > $@

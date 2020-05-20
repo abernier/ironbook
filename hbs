@@ -1,8 +1,25 @@
 #!/usr/bin/env node
 
+//
+// $ node hbs public/pages.hbs ~/tmp/course/course.xml
+//
+
+// Path to the .hbs template file
 const path = process.argv[2];
+
+// Path to the course.xml file
 const coursexml = process.argv[3];
 // console.log('coursexml', coursexml)
+
+let unitsfilter = process.argv[4];
+// console.log('jobdata', jobdata)
+try {
+  unitsfilter = unitsfilter.split(',')
+  debugger;
+} catch(err) {
+  unitsfilter = []
+}
+console.error('unitsfilter', unitsfilter)
 
 var hbs = require("handlebars");
 var fs = require('fs');
@@ -18,13 +35,13 @@ async function main() {
   const courses = await xmlcourse2json(coursexml)
   // console.log(courses);
 
-  const lessons = {
-    m1: [],
-    m2: [],
-    m3: []
-  };
+  const lessons = [];
   courses.course.chapter.forEach(chapter => {
-    const module = chapter.name.substr(7,1); // /!\ chapter name must begin with "Module X"
+    const chap = {
+      name: chapter.name,
+      lessons: []
+    }
+    lessons.push(chap)
 
     chapter.sequential.forEach(seq => {
       seq.vertical.forEach(vert => {
@@ -32,21 +49,17 @@ async function main() {
         if (!file) return;
 
         let name = vert.name;
+        let id = vert.id
 
         if (
-          file &&
-          !file.includes('other/') &&
-          !name.includes('LAB') &&
-          !name.toLowerCase().includes('bonus')
+          file && fs.existsSync(file) &&
+          !unitsfilter.includes(id)
         ) {
-          if (fs.existsSync(file) && Array.isArray(lessons[`m${module}`])) {
-            lessons[`m${module}`].push({
-              id: file,
-              title: name,
-              content: fs.readFileSync(file, 'utf8')
-            })
-          }
-          
+          chap.lessons.push({
+            id: file,
+            title: name,
+            content: fs.readFileSync(file, 'utf8')
+          })
         }
       })
       

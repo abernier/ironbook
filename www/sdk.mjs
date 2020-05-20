@@ -43,12 +43,12 @@ function jobUpdate(id, options = {}) {
 function post(file, options) {
   options || (options = {
     headers: {},
-    json: {},
+    filter: [],
     progress: console.log
   })
 
   return new Promise(function (resolve, reject) {
-    //console.log('sending a new request', headers, json)
+    //console.log('sending a new request', headers, filter)
     
     if (!file) {
       reject(new Error('file is required'));
@@ -61,8 +61,12 @@ function post(file, options) {
     xhr.onload = async function () {
       if (xhr.status >= 400) {
         console.log('xhr status >= 400');
-        return reject(new Error(xhr.response.message));
+        return reject(xhr.response);
       }
+
+      //
+      // 2xx
+      //
 
       let response;
       if (xhr.status === 202) {
@@ -71,6 +75,8 @@ function post(file, options) {
         //
 
         console.log('202 accepted');
+
+        options.onAccepted && options.onAccepted()
 
         let location = xhr.getResponseHeader('Location');
         if (location.length <= 0) {
@@ -105,9 +111,10 @@ function post(file, options) {
     
     const formdata = new FormData();
     
-    // for (let key in options.json) {
-    //   formdata.append(key, options.json[key]);
-    // }
+    // filters
+    options.filter.forEach(f => {
+      formdata.append('filter[]', f);
+    });
     
     formdata.append("tarball", file);
 

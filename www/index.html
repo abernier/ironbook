@@ -21,8 +21,9 @@
 <body class="select">
   <h1 id="masthead"><a href="/">Ironbook</a></h1>
   
-  <svg role="img" class="icon">
+  <svg role="img" class="icon bigicon">
     <use class="step--select" xlink:href="/icons.svg#hand"/>
+    <use class="step--filter" xlink:href="/icons.svg#checklist"/>
     <use class="step--queued" xlink:href="/icons.svg#dog"/>
     <use class="step--processing" xlink:href="/icons.svg#print"/>
     <use class="step--done" xlink:href="/icons.svg#pdf"/>
@@ -30,16 +31,49 @@
   </svg>
 
   <p class="message step--select"><label class="btn">Select <input type="file" accept="application/gzip"></label> your <samp>course.tar.gz</samp> file</p>
+  <p class="message step--filter">Select the units</p>
   <p class="message step--queued">Your ironbook has been queued</p>
   <p class="message step--processing">Your ironbook is <span class="progress">0</span>%</p>
   <p class="message step--done">You can <a href="" class="download" target="_blank">read</a> it now</p>
   <p class="message step--err">Something bad happened</p>
 
   <p class="hint step--select">Export it from the <a href="http://studio.ironhack.school" target="_blank">studio</a></p>
+  <p class="hint step--filter">Do your shopping below</p>
   <p class="hint step--queued"><small>Wait, it will start shortly...</small></p>
   <p class="hint step--processing step">It generally takes 1-2 mins</p>
   <p class="hint step--done">It will open in a new tab</p>
   <p class="hint step--err">Open the console to see the error</p>
+
+  <article>
+
+    <div class="listing step--filter">
+
+    </div>
+
+    <template id="tpl-chapter">
+      <div class="chapter">
+        <h2></h2>
+        <ul class="units"></ul>
+      </div>
+    </template>
+    
+    <template id="tpl-li">
+      <li>
+        <label><div class="in">
+          <div class="cbx">
+            <input type="checkbox" name="units" value="">
+            <div></div>
+          </div>
+          <span>FOO BAR</span>
+        <div></label>
+      </li>
+    </template>
+
+  </article>
+
+  <a href="javascript:void 0;" class="btn round step--filter">
+    Print <small>(<span data-nbunits>207</span>/<span data-unitslimit>100</span>)</small>
+  </a>
 
   <script type="module" src="/index.js?v=2"></script>
 </body>

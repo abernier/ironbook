@@ -30,6 +30,7 @@ async function buildPDF(tarballPath, job, options = {}) {
       // https://stackoverflow.com/a/27716861/133327
       var env = Object.create( process.env );
       env.COURSEXMLRELPATH = `${rootDirCourseFolderName}/course.xml`;
+      env.UNITSFILTER = job.data.filter.join(',')
 
       make = spawn(`make`, [`${dstdir}/public/pages.pdf`], {
         //stdio: 'inherit', // see: https://stackoverflow.com/a/43477289/133327
@@ -49,7 +50,7 @@ async function buildPDF(tarballPath, job, options = {}) {
 
       make.stderr.on('data', data => {
         data = `${data}`
-        console.log(data)
+        //console.log(data)
 
         if (data.includes('Running scripts')) {
           job.progress(intprog(3, initialProgress, finalProgress), 100, {step: 'prince:scripts'});
