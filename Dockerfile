@@ -45,4 +45,5 @@ RUN npm install
 COPY . ./  
 
 EXPOSE 3000
-ENTRYPOINT [ "bin/ironbook" ]
+ENTRYPOINT [ "/usr/bin/env" ]
+CMD ["bin/ironbook"]
