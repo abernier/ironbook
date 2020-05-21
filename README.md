@@ -52,12 +52,7 @@ npm run start-worker
 ```sh
 $ docker build -t ironbook .
 
-$ docker network create ironbook-net
-
-$ docker run --rm \
-  --network ironbook-net \
-  -p 3000:3000 \
-  ironbook
+$ cat ~/tmp/course.tiny.tar.gz | docker run -i ironbook >toto.pdf
 ```
 
 To generate:

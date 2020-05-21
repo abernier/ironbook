@@ -175,7 +175,7 @@ app.post('/', upload.single('tarball'), catchNext(async function (req, res, next
   const {units, chapters} = listUnits(jsoncourse, filter)
   console.log('units', units.length);
 
-  const unitsLimit = Number(conf.unitslimit) || 100;
+  const unitsLimit = Number(conf.unitslimit) || Infinity;
   if (units.length > unitsLimit) {
     const er = new Error('Too much units')
     er.status = 422;

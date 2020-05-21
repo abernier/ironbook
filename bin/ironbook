@@ -1,0 +1,39 @@
+#!/usr/bin/env node
+
+const os = require('os')
+const uuid = require('uuid')
+const fs = require('fs')
+const buildPDF = require('../buildpdf.js')
+
+
+let tarballpath;
+
+if (process.argv.length > 2) {
+  tarballpath = process.argv[2]
+  then()
+} else {
+  tarballpath = `${os.tmpdir()}/${uuid.v4()}`
+  console.error('tarballpath', tarballpath)
+  const ws = fs.createWriteStream(tarballpath)
+
+  ws.on('finish', () => {
+    then()
+  })
+
+  process.stdin.pipe(ws)
+}
+
+function then() {
+  main().catch(err => {
+    console.error(err)
+    process.exit(1);
+  })
+}
+
+async function main () {
+  const pdfpath = await buildPDF(tarballpath) // /var/folders/l_/093zhsy96wg9s3lrmkt15jwh0000gn/T/8ff07a43-486c-450f-8067-0883528f6d12
+
+  // cat the pdfpath content to stdout
+  fs.createReadStream(pdfpath).pipe(process.stdout)
+}
+
