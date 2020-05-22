@@ -52,7 +52,7 @@ npm run start-worker
 ```sh
 $ docker build -t ironbook .
 
-$ cat ~/tmp/course.tiny.tar.gz | docker run -i ironbook >toto.pdf
+$ docker run -i ironbook < ~/tmp/course.tar.gz > output.pdf
 ```
 
 To generate:
