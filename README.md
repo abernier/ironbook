@@ -1,4 +1,4 @@
-[![IMG_20200108_111605](https://user-images.githubusercontent.com/76580/187889826-449ccee2-4732-4438-b3ba-4f8a01a876c7.jpg)](https://photos.app.goo.gl/dGATTJwCyXZx1Y7V6)
+[<img width="1431" alt="Screenshot 2022-09-01 at 12 12 50" src="https://user-images.githubusercontent.com/76580/187890194-064f2ee5-699e-465a-8866-476928d91fb7.png">](https://photos.app.goo.gl/dGATTJwCyXZx1Y7V6)
 
 
 ```sh
