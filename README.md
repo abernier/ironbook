@@ -1,3 +1,6 @@
+[<img width="1431" alt="Screenshot 2022-09-01 at 12 12 50" src="https://user-images.githubusercontent.com/76580/187890194-064f2ee5-699e-465a-8866-476928d91fb7.png">](https://photos.app.goo.gl/dGATTJwCyXZx1Y7V6)
+
+
 ```sh
 curl -XPOST -F 'tarball=@/Users/abernier/tmp/course.tar.gz' http://localhost:3000/
 ```
