@@ -119,7 +119,7 @@ $input.onchange = async function (e) {
           
           const $checkbox = $li.querySelector('input[type="checkbox"]');
           $checkbox.value = unit.id;
-          $checkbox.checked = true;
+          $checkbox.checked = !(unit.name.startsWith('[') || unit.name.startsWith('!'));
   
           $checkbox.onchange = function (e) {
             updateNbunits(err.data.limit)
